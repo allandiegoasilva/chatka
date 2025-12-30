@@ -1,0 +1,23 @@
+{
+    "editor.formatOnSave": true,
+    "editor.tabSize": 2,
+    "prettier.requireConfig": true,
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit",
+      "source.sortImports": "explicit",
+      "source.removeUnusedImports": "explicit"
+    },
+    "files.exclude": {
+      "**/node_modules": true,
+      "**/dist": true,
+      "**/*.js": { "when": "$(basename).ts" }
+    },
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "[typescript]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "tailwindCSS.experimental.classRegex": [
+      ["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"],
+      ["cx\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"]
+    ]
+  }
