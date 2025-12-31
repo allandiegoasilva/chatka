@@ -1,5 +1,6 @@
 "use client";
 
+import { socketConnect } from "@/lib/socket-client";
 import { createContext, useContext, useEffect, useState } from "react";
 
 export enum ChatOrigin {
@@ -43,7 +44,7 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   useEffect(() => {
-    console.log("connect socket");
+    socketConnect();
   }, []);
 
   return (
