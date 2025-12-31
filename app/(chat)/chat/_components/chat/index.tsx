@@ -1,6 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { ArrowRightIcon } from "lucide-react";
+import { LocalVideoChat } from "./local-video-chat";
+import { RemoteVideoChat } from "./remote-video-chat";
 
 export function Chat() {
   return (
@@ -10,10 +12,10 @@ export function Chat() {
       {/* Vídeo Layout */}
       <div className="grid grid-cols-2 grid-rows-[1fr_auto]">
         <div className="col-span-1 flex flex-1 w-full h-full border border-r rounded-l-xl">
-          teste
+          <LocalVideoChat />
         </div>
         <div className="col-span-1 flex flex-1 w-full h-full border border-l rounded-r-xl">
-          teste
+          <RemoteVideoChat />
         </div>
 
         {/* NextButton */}

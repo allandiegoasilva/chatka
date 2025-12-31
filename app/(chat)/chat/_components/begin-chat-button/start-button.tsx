@@ -1,49 +1,51 @@
 "use client";
 
+import { ChatStatus, useChat } from "@/components/chat/chat.provider";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Video } from "lucide-react";
 
-async function requestPermissions() {
-  try {
-    // Solicita permissões de câmera e microfone
-    const stream = await navigator.mediaDevices.getUserMedia({
-      video: true,
-      audio: true,
-    });
-
-    // Para o stream imediatamente após obter as permissões
-    // (você pode remover isso se quiser manter o stream ativo)
-    stream.getTracks().forEach((track) => track.stop());
-
-    console.log("Permissões de câmera e microfone concedidas");
-    return true;
-  } catch (error) {
-    console.error("Erro ao solicitar permissões:", error);
-
-    if (error instanceof Error) {
-      if (error.name === "NotAllowedError") {
-        alert(
-          "Permissões negadas. Por favor, permita o acesso à câmera e ao microfone nas configurações do navegador.",
-        );
-      } else if (error.name === "NotFoundError") {
-        alert(
-          "Nenhuma câmera ou microfone encontrado. Verifique se os dispositivos estão conectados.",
-        );
-      } else if (error.name === "NotReadableError") {
-        alert(
-          "Não foi possível acessar a câmera ou microfone. Eles podem estar sendo usados por outro aplicativo.",
-        );
-      } else {
-        alert(`Erro ao acessar dispositivos de mídia: ${error.message}`);
-      }
-    }
-
-    return false;
-  }
-}
-
 export function StartButton() {
+  const { changeChat } = useChat();
+
+  async function requestPermissions() {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: true,
+      });
+
+      // Define o stream local no contexto do chat e atualiza o status
+      // O stream deve permanecer ativo para ser usado no componente de vídeo
+      changeChat({ 
+        localStream: stream,
+        status: ChatStatus.WAITING,
+      });
+
+      return true;
+    } catch (error) {
+      if (error instanceof Error) {
+        if (error.name === "NotAllowedError") {
+          alert(
+            "Permissões negadas. Por favor, permita o acesso à câmera e ao microfone nas configurações do navegador.",
+          );
+        } else if (error.name === "NotFoundError") {
+          alert(
+            "Nenhuma câmera ou microfone encontrado. Verifique se os dispositivos estão conectados.",
+          );
+        } else if (error.name === "NotReadableError") {
+          alert(
+            "Não foi possível acessar a câmera ou microfone. Eles podem estar sendo usados por outro aplicativo.",
+          );
+        } else {
+          alert(`Erro ao acessar dispositivos de mídia: ${error.message}`);
+        }
+      }
+
+      return false;
+    }
+  }
+
   return (
     <>
       <Button

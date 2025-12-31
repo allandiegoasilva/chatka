@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 export enum ChatOrigin {
   LOCAL = "LOCAL",
@@ -8,20 +8,51 @@ export enum ChatOrigin {
 }
 
 export enum ChatStatus {
+  REQUIRE_PERMISSION = "REQUIRE_PERMISSION",
   WAITING = "WAITING",
   CONNECTED = "CONNECTED",
-  DISCONNECTED = "DISCONNECTED",
 }
 
-export type ChatContextProps = {
-  changeStatus: (status: ChatStatus) => void;
-  changeOrigin: (origin: ChatOrigin) => void;
+export type ChatMetadata = {
   status: ChatStatus;
   origin: ChatOrigin;
+  localStream: MediaStream | null;
+  remoteStream: MediaStream | null;
+};
+
+export type ChatContextProps = {
+  changeChat(metadata: Partial<ChatMetadata>): void;
+  metadata: ChatMetadata;
 };
 
 const ChatContext = createContext({});
 
 export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
-  return <ChatContext.Provider value={{}}>{children}</ChatContext.Provider>;
+  const [metadata, setMetadata] = useState<ChatMetadata>({
+    status: ChatStatus.REQUIRE_PERMISSION,
+    origin: ChatOrigin.LOCAL,
+    localStream: null,
+    remoteStream: null,
+  });
+
+  function changeChat(input: Partial<ChatMetadata>) {
+    setMetadata({
+      ...metadata,
+      ...input,
+    });
+  }
+
+  useEffect(() => {
+    console.log("connect socket");
+  }, []);
+
+  return (
+    <ChatContext.Provider value={{ changeChat, metadata }}>
+      {children}
+    </ChatContext.Provider>
+  );
 };
+
+export function useChat(): ChatContextProps {
+  return useContext(ChatContext) as ChatContextProps;
+}
