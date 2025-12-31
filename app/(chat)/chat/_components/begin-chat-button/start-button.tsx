@@ -2,6 +2,7 @@
 
 import { ChatStatus, useChat } from "@/components/chat/chat.provider";
 import { Button } from "@/components/ui/button";
+import { getSocket } from "@/lib/socket-client";
 import { cn } from "@/lib/utils";
 import { Video } from "lucide-react";
 
@@ -17,10 +18,16 @@ export function StartButton() {
 
       // Define o stream local no contexto do chat e atualiza o status
       // O stream deve permanecer ativo para ser usado no componente de vídeo
-      changeChat({ 
+      changeChat({
         localStream: stream,
         status: ChatStatus.WAITING,
       });
+
+      // Envia evento para entrar na fila
+      const socket = getSocket();
+      if (socket?.connected) {
+        socket.emit("queue:join");
+      }
 
       return true;
     } catch (error) {

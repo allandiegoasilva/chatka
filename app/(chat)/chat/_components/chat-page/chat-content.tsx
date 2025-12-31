@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  ChatProvider,
   ChatStatus,
   useChat,
 } from "@/components/chat/chat.provider";
@@ -12,7 +11,7 @@ type Props = {
   showError: boolean;
 };
 
-function ChatContent({  showError }: Props) {
+export function ChatContent({ showError }: Props) {
   const { metadata } = useChat();
 
   if (metadata.status === ChatStatus.REQUIRE_PERMISSION) {
@@ -22,10 +21,3 @@ function ChatContent({  showError }: Props) {
   return <Chat />;
 }
 
-export function ChatPage({ showError }: Props) {
-  return (
-    <ChatProvider>
-      <ChatContent showError={showError} />
-    </ChatProvider>
-  );
-}

@@ -1,12 +1,17 @@
 import { cn } from "@/lib/utils";
 import { Background } from "./background";
+import { DisconnectionAlert } from "./disconnection-alert";
 import { FeaturesGrid } from "./features-grid";
 import { HeroSection } from "./hero-section";
 import { MainIcon } from "./main-icon";
 import { OnlineStatus } from "./online-status";
 import { StartButton } from "./start-button";
 
-export function BeginChatButton() {
+type Props = {
+  showError: boolean;
+};
+
+export function BeginChatButton({ showError }: Props) {
   const stats = {
     online: 1247,
   };
@@ -24,6 +29,7 @@ export function BeginChatButton() {
             "shadow-2xl space-y-8",
           )}
         >
+          {showError && <DisconnectionAlert />}
           <OnlineStatus onlineUsers={stats.online} />
           <MainIcon />
           <HeroSection />
