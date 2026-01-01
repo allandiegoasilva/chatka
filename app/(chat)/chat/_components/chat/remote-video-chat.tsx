@@ -75,7 +75,7 @@ export function RemoteVideoChat() {
         autoPlay
         playsInline
         className={cn(
-          "w-full h-full object-cover object-center",
+          "w-full h-full object-cover object-center scale-x-[-1]",
           isWaiting && "hidden",
         )}
       />
