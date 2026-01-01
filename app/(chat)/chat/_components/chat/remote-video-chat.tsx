@@ -6,19 +6,19 @@ import { useEffect, useRef } from "react";
 import { RemoteVideo } from "./remote-video";
 
 export function RemoteVideoChat() {
-  const { metadata } = useChat();
+  const { metadata, remoteStream } = useChat();
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     const video = videoRef.current;
-    if (!video || !metadata.remoteStream) return;
+    if (!video || !remoteStream) return;
 
     // Atribui o stream ao vídeo
-    video.srcObject = metadata.remoteStream;
+    video.srcObject = remoteStream.current;
 
     // Função para reproduzir o vídeo
     const playVideo = async () => {
-      if (!video || video.srcObject !== metadata.remoteStream) return;
+      if (!video || video.srcObject !== remoteStream.current) return;
 
       try {
         await video.play();
@@ -49,26 +49,26 @@ export function RemoteVideoChat() {
         video.removeEventListener("canplay", handleCanPlay);
       };
     }
-  }, [metadata.remoteStream]);
+  }, []);
 
   const isWaiting = metadata.status === ChatStatus.WAITING;
-  const hasRemoteStream = !!metadata.remoteStream;
 
   return (
-    <div className="relative w-full h-full rounded-xl lg:rounded-l-none overflow-hidden bg-neutral-900">
-      {isWaiting && <RemoteVideo />}
-
-      {!hasRemoteStream && !isWaiting && (
+    <div className="relative w-full h-full rounded-xl rounded-l-none overflow-hidden bg-neutral-900">
+      {metadata.status === ChatStatus.CONNECTED && (
         <div
           className={cn(
-            "absolute inset-0 flex items-center justify-center",
-            "bg-neutral-800 z-10",
-            "text-muted-foreground",
+            "absolute top-4 left-4 z-20",
+            "px-3 py-1.5 rounded-md",
+            "bg-black/60 backdrop-blur-sm border border-white/10",
+            "text-sm font-medium text-white",
           )}
         >
-          <p className="text-sm">Aguardando vídeo remoto...</p>
+          CONECTADO
         </div>
       )}
+
+      {isWaiting && <RemoteVideo />}
 
       <video
         ref={videoRef}
@@ -76,7 +76,7 @@ export function RemoteVideoChat() {
         playsInline
         className={cn(
           "w-full h-full object-cover object-center",
-          !hasRemoteStream && "hidden",
+          isWaiting && "hidden",
         )}
       />
     </div>

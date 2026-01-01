@@ -1,23 +1,23 @@
 "use client";
 
-import { useChat } from "@/components/chat/chat.provider";
+import { ChatStatus, useChat } from "@/components/chat/chat.provider";
 import { cn } from "@/lib/utils";
 import { useEffect, useRef } from "react";
 
 export function LocalVideoChat() {
-  const { metadata } = useChat();
+  const { metadata, localStream } = useChat();
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     const video = videoRef.current;
-    if (!video || !metadata.localStream) return;
+    if (!video || !localStream.current) return;
 
     // Atribui o stream ao vídeo
-    video.srcObject = metadata.localStream;
+    video.srcObject = localStream.current;
 
     // Função para reproduzir o vídeo
     const playVideo = async () => {
-      if (!video || video.srcObject !== metadata.localStream) return;
+      if (!video || video.srcObject !== localStream.current) return;
 
       try {
         await video.play();
@@ -48,11 +48,11 @@ export function LocalVideoChat() {
         video.removeEventListener("canplay", handleCanPlay);
       };
     }
-  }, [metadata.localStream]);
+  }, []);
 
   return (
-    <div className="relative w-full h-full rounded-xl lg:rounded-r-none overflow-hidden bg-neutral-900">
-      {!metadata.localStream && (
+    <div className="relative w-full h-full rounded-xl rounded-r-none overflow-hidden bg-neutral-900">
+      {metadata.status === ChatStatus.REQUIRE_PERMISSION && (
         <div
           className={cn(
             "absolute inset-0 flex items-center justify-center",

@@ -11,14 +11,14 @@ export async function socketConnect() {
 
   const clientId = await userSaveAction();
 
+  if (clientId === "fail") {
+    return null;
+  }
+
   socket = io("http://localhost:3001", {
     query: {
       clientId: clientId,
     },
-  });
-
-  socket.on("connect", () => {
-    console.log("connected to socket", clientId);
   });
 
   socket.on("disconnect", () => {

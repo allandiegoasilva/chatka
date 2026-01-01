@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import { Video } from "lucide-react";
 
 export function StartButton() {
-  const { changeChat } = useChat();
+  const { changeChat, localStream } = useChat();
 
   async function requestPermissions() {
     try {
@@ -18,10 +18,9 @@ export function StartButton() {
 
       // Define o stream local no contexto do chat e atualiza o status
       // O stream deve permanecer ativo para ser usado no componente de vídeo
-      changeChat({
-        localStream: stream,
-        status: ChatStatus.WAITING,
-      });
+      if (localStream) {
+        localStream.current = stream;
+      }
 
       // Envia evento para entrar na fila
       const socket = getSocket();
@@ -29,6 +28,9 @@ export function StartButton() {
         socket.emit("queue:join");
       }
 
+      changeChat({
+        status: ChatStatus.WAITING,
+      });
       return true;
     } catch (error) {
       if (error instanceof Error) {
