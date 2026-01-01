@@ -11,7 +11,6 @@ export async function socketConnect() {
 
   const clientId = await userGetIdAction();
 
-  console.log("CLIENT ID", clientId);
   if (clientId === "fail") {
     return null;
   }
