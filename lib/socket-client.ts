@@ -1,5 +1,5 @@
 "use client";
-import { userSaveAction } from "@/backend/user/actions/user-save.action";
+import { userGetIdAction } from "@/backend/user/actions/user-get-id.action";
 import { io, Socket } from "socket.io-client";
 
 let socket: Socket | null = null;
@@ -9,8 +9,9 @@ export async function socketConnect() {
     return socket;
   }
 
-  const clientId = await userSaveAction();
+  const clientId = await userGetIdAction();
 
+  console.log("CLIENT ID", clientId);
   if (clientId === "fail") {
     return null;
   }

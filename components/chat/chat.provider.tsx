@@ -2,6 +2,7 @@
 
 import { MatchFoundDto } from "@/backend/match/match-found.dto";
 import { userGetIdAction } from "@/backend/user/actions/user-get-id.action";
+import { userSaveAction } from "@/backend/user/actions/user-save.action";
 import { socketConnect } from "@/lib/socket-client";
 import { createWebrtcClient } from "@/lib/webrtc-client";
 import {
@@ -51,6 +52,7 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
   });
 
   async function loadUserId() {
+    await userSaveAction();
     userId = await userGetIdAction();
     console.log("USER ID", userId);
   }
