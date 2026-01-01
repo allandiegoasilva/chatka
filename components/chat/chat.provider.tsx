@@ -102,7 +102,7 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
       }
 
       webRTCRef.current!.ontrack = (event: RTCTrackEvent) => {
-        console.log("ON TRACK", event);
+        console.log("ON TRACK", event.streams);
         remoteStreamRef.current = event.streams[0];
       };
 
@@ -111,7 +111,7 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
       ) => {
         console.log("INICIANDO O ICE CANDIDATE");
         if (event && socket) {
-          console.log("ON ICE CANDIDATE", event);
+          console.log("ENVIANDO ICE CANDIDATE", event);
           socket.emit("match:candidate", {
             matchId: metadata.matchId,
             userId: userId,
@@ -130,6 +130,7 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
       webRTCRef.current = createWebrtcClient();
 
       localWebRTCClient(match.startOffer);
+      eventWebRTCClient();
     });
 
     socket.on("match:ended", () => {
@@ -139,20 +140,11 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
       });
     });
 
-    socket.on("match:candidate", (candidate) => {
-      console.log("ON-CANDIDATE", candidate);
-      webRTCRef.current!.addIceCandidate(candidate);
-    });
-
-    socket.on("match:answer", (answer) => {
-      console.log("ON-ANSWER", answer);
-      webRTCRef.current!.setRemoteDescription(answer);
-    });
-
     socket.on("match:offer", async (offer) => {
       console.log("ON-OFFER", offer);
       const pc = webRTCRef.current!;
       await pc.setRemoteDescription(offer);
+      console.log("PC: ", pc);
 
       const answer = await pc.createAnswer();
       await pc.setLocalDescription(answer);
@@ -163,6 +155,21 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
         userId: userId,
         answer,
       });
+    });
+
+    socket.on("match:candidate", async (candidate) => {
+      if (!candidate) {
+        console.log("CANDIDATE IS NULL");
+        return;
+      }
+
+      console.log("ON-CANDIDATE", candidate);
+      await webRTCRef.current!.addIceCandidate(candidate);
+    });
+
+    socket.on("match:answer", (answer) => {
+      console.log("ON-ANSWER", answer);
+      webRTCRef.current!.setRemoteDescription(answer);
     });
   }
 
