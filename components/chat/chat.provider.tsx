@@ -3,7 +3,7 @@
 import { MatchFoundDto } from "@/backend/match/match-found.dto";
 import { userGetIdAction } from "@/backend/user/actions/user-get-id.action";
 import { userSaveAction } from "@/backend/user/actions/user-save.action";
-import { socketConnect } from "@/lib/socket-client";
+import { getSocket, socketConnect } from "@/lib/socket-client";
 import { createWebrtcClient } from "@/lib/webrtc-client";
 import {
   createContext,
@@ -29,6 +29,7 @@ export type ChatMetadata = {
   status: ChatStatus;
   matchId?: string;
   userId?: string;
+  isConnected: boolean;
 };
 
 export type ChatContextProps = {
@@ -176,9 +177,21 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
     });
   }
 
+  function checkConnection() {
+    const socket = getSocket();
+    if (!socket) {
+      return;
+    }
+
+    changeChat({
+      isConnected: true,
+    });
+  }
+
   useEffect(() => {
     loadUserId();
     listenEvents();
+    checkConnection();
   }, []);
 
   return (

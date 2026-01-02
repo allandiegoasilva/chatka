@@ -12,10 +12,6 @@ type Props = {
 };
 
 export function BeginChatButton({ showError }: Props) {
-  const stats = {
-    online: 1247,
-  };
-
   return (
     <main className="min-h-screen w-full relative overflow-hidden flex items-center justify-center p-4">
       <Background />
@@ -30,7 +26,7 @@ export function BeginChatButton({ showError }: Props) {
           )}
         >
           {showError && <DisconnectionAlert />}
-          <OnlineStatus onlineUsers={stats.online} />
+          <OnlineStatus />
           <MainIcon />
           <HeroSection />
           <FeaturesGrid />
