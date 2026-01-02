@@ -64,7 +64,6 @@ export function StartButton() {
           "w-full md:w-auto px-8 py-6 text-lg font-semibold",
           "bg-primary hover:bg-primary/90 text-primary-foreground",
           "shadow-lg hover:shadow-xl transition-all duration-300",
-          "transform hover:scale-105",
         )}
       >
         <Video className="size-5 mr-2" />

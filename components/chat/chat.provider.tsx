@@ -30,6 +30,8 @@ export type ChatMetadata = {
   matchId?: string;
   userId?: string;
   isConnected: boolean;
+  webRTCStatus?: string;
+  remoteStreamUpdated?: number;
 };
 
 export type ChatContextProps = {
@@ -37,6 +39,7 @@ export type ChatContextProps = {
   metadata: ChatMetadata;
   localStream: RefObject<MediaStream | null>;
   remoteStream: RefObject<MediaStream | null>;
+  receivedTrackStream: number;
 };
 
 const ChatContext = createContext({});
@@ -51,7 +54,10 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
     Omit<ChatMetadata, "localStream" | "remoteStream">
   >({
     status: ChatStatus.REQUIRE_PERMISSION,
+    isConnected: false,
   });
+
+  const [receivedTrackStream, setReceivedTrackStream] = useState<number>(0);
 
   async function loadUserId() {
     await userSaveAction();
@@ -89,7 +95,6 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
 
       // INICIAR A OFFER SÓ DE UM LADO
       if (startOffer) {
-        console.log("INICIANDO A OFFER");
         const offer = await webRTCRef.current!.createOffer();
         await webRTCRef.current!.setLocalDescription(offer);
         socket!.emit("match:offer", {
@@ -106,16 +111,16 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
       }
 
       webRTCRef.current!.ontrack = (event: RTCTrackEvent) => {
-        console.log("ON TRACK", event.streams);
         remoteStreamRef.current = event.streams[0];
+        if (receivedTrackStream === 0) {
+          setReceivedTrackStream(receivedTrackStream + 1);
+        }
       };
 
       webRTCRef.current!.onicecandidate = (
         event: RTCPeerConnectionIceEvent,
       ) => {
-        console.log("INICIANDO O ICE CANDIDATE");
-        if (event && socket) {
-          console.log("ENVIANDO ICE CANDIDATE", event);
+        if (event?.candidate && socket) {
           socket.emit("match:candidate", {
             matchId: metadata.matchId,
             userId: userId,
@@ -142,18 +147,17 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
       changeChat({
         status: ChatStatus.WAITING,
       });
+
+      setReceivedTrackStream(0);
     });
 
     socket.on("match:offer", async (offer) => {
-      console.log("ON-OFFER", offer);
       const pc = webRTCRef.current!;
       await pc.setRemoteDescription(offer);
-      console.log("PC: ", pc);
 
       const answer = await pc.createAnswer();
       await pc.setLocalDescription(answer);
 
-      console.log("INICIANDO A ANSWER");
       socket!.emit("match:answer", {
         matchId: metadata.matchId,
         userId: userId,
@@ -161,18 +165,22 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
       });
     });
 
+    const pendingCandidates: RTCIceCandidate[] = [];
     socket.on("match:candidate", async (candidate) => {
       if (!candidate) {
-        console.log("CANDIDATE IS NULL");
         return;
       }
 
-      console.log("ON-CANDIDATE", candidate);
-      await webRTCRef.current!.addIceCandidate(candidate);
+      const pc = webRTCRef.current!;
+
+      if (pc.remoteDescription) {
+        return await webRTCRef.current!.addIceCandidate(candidate);
+      }
+
+      pendingCandidates.push(candidate);
     });
 
     socket.on("match:answer", (answer) => {
-      console.log("ON-ANSWER", answer);
       webRTCRef.current!.setRemoteDescription(answer);
     });
   }
@@ -201,6 +209,7 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
         metadata,
         localStream: localStreamRef,
         remoteStream: remoteStreamRef,
+        receivedTrackStream,
       }}
     >
       {children}
