@@ -1,10 +1,36 @@
+"use client";
+
+import { useChat } from "@/components/chat/chat.provider";
+import { getSocket } from "@/lib/socket-client";
 import { Users } from "lucide-react";
+import { useEffect, useState } from "react";
 
-interface OnlineStatusProps {
-  onlineUsers: number;
-}
+export function OnlineStatus() {
+  const { metadata } = useChat();
+  const [onlineUsers, setOnlineUsers] = useState(0);
 
-export function OnlineStatus({ onlineUsers }: OnlineStatusProps) {
+  function loadStats() {
+    const socket = getSocket();
+    if (!socket) {
+      return;
+    }
+
+    socket.emit("users:stats", (stats: { total: number }) => {
+      setOnlineUsers(stats.total);
+    });
+  }
+
+  function loadStatsWithInterval() {
+    loadStats();
+    setInterval(() => {
+      loadStats();
+    }, 3000);
+  }
+
+  useEffect(() => {
+    loadStatsWithInterval();
+  }, [metadata.isConnected]);
+
   return (
     <div className="w-full flex items-center justify-center gap-4 p-4 rounded-xl bg-muted/30 border">
       <div className="flex items-center gap-3">
@@ -28,6 +54,3 @@ export function OnlineStatus({ onlineUsers }: OnlineStatusProps) {
     </div>
   );
 }
-
-
-
