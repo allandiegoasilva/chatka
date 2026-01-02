@@ -68,7 +68,7 @@ export function LocalVideoChat() {
         autoPlay
         playsInline
         muted
-        className={cn("w-full h-full object-cover object-center")}
+        className={cn("w-full h-full object-cover object-center ok ")}
         style={{
           transform: "scaleX(-1)", // Espelha o vídeo horizontalmente
         }}
