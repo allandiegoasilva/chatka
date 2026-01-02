@@ -1,7 +1,6 @@
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { ArrowRightIcon } from "lucide-react";
 import { LocalVideoChat } from "./local-video-chat";
+import { NextMatchButton } from "./next-match-button";
 import { RemoteVideoChat } from "./remote-video-chat";
 
 export function Chat() {
@@ -25,9 +24,7 @@ export function Chat() {
             "flex items-center justify-end",
           )}
         >
-          <Button variant="outline">
-            Próximo <ArrowRightIcon className="size-4" />
-          </Button>
+          <NextMatchButton />
         </div>
       </div>
     </main>

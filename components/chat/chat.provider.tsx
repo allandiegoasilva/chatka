@@ -28,6 +28,7 @@ export enum ChatStatus {
 export type ChatMetadata = {
   status: ChatStatus;
   matchId?: string;
+  userId?: string;
 };
 
 export type ChatContextProps = {
@@ -54,7 +55,9 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
   async function loadUserId() {
     await userSaveAction();
     userId = await userGetIdAction();
-    console.log("USER ID", userId);
+    changeChat({
+      userId: userId,
+    });
   }
 
   function changeChat(input: Partial<ChatMetadata>) {
