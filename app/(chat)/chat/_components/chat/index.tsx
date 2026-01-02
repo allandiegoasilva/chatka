@@ -30,14 +30,6 @@ export function Chat() {
           </Button>
         </div>
       </div>
-      {/* Chat */}
-      <div
-        className={cn(
-          "w-full flex flex-col rounded-xl p-4",
-          "bg-neutral-900 border rounded-xl p-5",
-          "lg:min-w-md",
-        )}
-      ></div>
     </main>
   );
 }
