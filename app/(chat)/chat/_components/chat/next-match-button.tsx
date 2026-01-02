@@ -12,10 +12,7 @@ export function NextMatchButton() {
   async function handleNextMatch() {
     const userId = await userGetIdAction();
     const socket = getSocket();
-    console.log("METADATA", {
-      userId: userId,
-      matchId: metadata.matchId,
-    });
+
     socket!.emit("match:next", {
       userId: userId,
       matchId: metadata.matchId,
