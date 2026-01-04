@@ -27,7 +27,7 @@ export function FeaturesGrid() {
         return (
           <div
             key={feature.label}
-            className="flex flex-col items-center gap-2 p-4 rounded-lg bg-muted/50 hover:bg-muted/70 transition-colors border border-transparent hover:border-primary/20"
+            className="flex flex-col items-center gap-2 p-4 rounded-lg bg-muted/50 border border-transparent"
           >
             <div className="p-2 rounded-lg bg-primary/10">
               <Icon className="size-5 text-primary" />
@@ -41,8 +41,3 @@ export function FeaturesGrid() {
     </div>
   );
 }
-
-
-
-
-
