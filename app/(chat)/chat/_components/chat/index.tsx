@@ -22,32 +22,29 @@ export function Chat() {
       )}
     >
       {/* Vídeo Layout */}
-      <div className="relative w-full h-screen md:h-auto md:grid md:grid-cols-2 md:grid-rows-[1fr_auto] gap-2 lg:gap-0">
-        {/* Vídeo local - oculto no mobile (fica flutuante) */}
-        <div className="hidden md:flex col-span-1 flex-1 w-full h-full border border-r rounded-l-xl overflow-hidden">
-          <LocalVideoChat />
-        </div>
-        {/* Vídeo local flutuante no mobile */}
-        <div className="block md:hidden">
-          <LocalVideoChat />
-        </div>
-        
-        {/* Vídeo remoto - ocupa 100% no mobile */}
-        <div className="fixed inset-0 md:static md:col-span-1 flex flex-1 w-full h-full border-0 md:border md:border-l rounded-none md:rounded-r-xl overflow-hidden">
-          <RemoteVideoChat />
+      <div className="relative w-full h-screen md:h-auto lg:h-[calc(100vh-5rem)] md:flex md:flex-col">
+        <div className="relative w-full flex-1 md:grid md:grid-cols-2 gap-2 lg:gap-0 min-h-0">
+          {/* Vídeo local - oculto no mobile (fica flutuante) */}
+          <div className="hidden md:flex col-span-1 w-full h-full border border-r rounded-l-xl overflow-hidden min-h-0">
+            <LocalVideoChat />
+          </div>
+          {/* Vídeo local flutuante no mobile */}
+          <div className="block md:hidden">
+            <LocalVideoChat />
+          </div>
+          
+          {/* Vídeo remoto - ocupa 100% no mobile */}
+          <div className="fixed inset-0 md:static md:col-span-1 flex w-full h-full border-0 md:border md:border-l rounded-none md:rounded-r-xl overflow-hidden min-h-0">
+            <RemoteVideoChat />
+          </div>
         </div>
 
         {/* NextButton - Desktop */}
-        <div
-          className={cn(
-            "hidden md:flex col-span-2",
-            "min-h-16 flex w-full",
-            "flex items-center justify-end",
-            "mt-2 lg:mt-0",
-          )}
-        >
-          <NextMatchButton />
-        </div>
+        {!isWaiting && (
+          <div className="hidden md:flex w-full items-center justify-end mt-2 shrink-0 py-2">
+            <NextMatchButton />
+          </div>
+        )}
       </div>
 
       {/* TextChat - Desktop */}
