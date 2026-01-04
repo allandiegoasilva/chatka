@@ -3,6 +3,7 @@
 import { MatchFoundDto } from "@/backend/match/match-found.dto";
 import { userGetIdAction } from "@/backend/user/actions/user-get-id.action";
 import { userSaveAction } from "@/backend/user/actions/user-save.action";
+import { UserGender } from "@/backend/user/enum/user-gender.enum";
 import { getSocket, socketConnect } from "@/lib/socket-client";
 import { createWebrtcClient } from "@/lib/webrtc-client";
 import {
@@ -32,6 +33,12 @@ export type ChatMetadata = {
   isConnected: boolean;
   webRTCStatus?: string;
   remoteStreamUpdated?: number;
+  userRemote: {
+    username: string;
+    gender: UserGender;
+    countryCode: string | null;
+    state: string | null;
+  };
 };
 
 export type ChatContextProps = {
@@ -55,6 +62,12 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
   >({
     status: ChatStatus.REQUIRE_PERMISSION,
     isConnected: false,
+    remoteUser: {
+      username: "",
+      gender: UserGender.MALE,
+      countryCode: null,
+      state: null,
+    },
   });
 
   const [receivedTrackStream, setReceivedTrackStream] = useState<number>(0);
@@ -131,9 +144,16 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
     }
 
     socket.on("match:found", (match: MatchFoundDto) => {
+      console.log(match);
       changeChat({
         status: ChatStatus.CONNECTED,
         matchId: match.matchId,
+        remoteUser: {
+          username: match.userRemote?.username,
+          gender: match.userRemote?.gender,
+          countryCode: match.userRemote?.countryCode,
+          state: match.userRemote?.state,
+        },
       });
 
       webRTCRef.current = createWebrtcClient();
@@ -146,6 +166,12 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
       socket?.emit("queue:join");
       changeChat({
         status: ChatStatus.WAITING,
+        remoteUser: {
+          gender: UserGender.MALE,
+          countryCode: null,
+          state: null,
+          username: "",
+        },
       });
 
       setReceivedTrackStream(0);
