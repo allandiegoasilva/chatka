@@ -6,15 +6,17 @@ import { useEffect, useRef } from "react";
 import { RemoteVideo } from "./remote-video";
 
 export function RemoteVideoChat() {
-  const { metadata, remoteStream } = useChat();
+  const { metadata, remoteStream, receivedTrackStream } = useChat();
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     const video = videoRef.current;
-    if (!video || !remoteStream) return;
+    if (!video || !remoteStream?.current) return;
 
-    // Atribui o stream ao vídeo
-    video.srcObject = remoteStream.current;
+    // Atribui o stream ao vídeo apenas se for diferente
+    if (video.srcObject !== remoteStream.current) {
+      video.srcObject = remoteStream.current;
+    }
 
     // Função para reproduzir o vídeo
     const playVideo = async () => {
@@ -49,7 +51,7 @@ export function RemoteVideoChat() {
         video.removeEventListener("canplay", handleCanPlay);
       };
     }
-  }, []);
+  }, [receivedTrackStream]);
 
   const isWaiting = metadata.status === ChatStatus.WAITING;
 

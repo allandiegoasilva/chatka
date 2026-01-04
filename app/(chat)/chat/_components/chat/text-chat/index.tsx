@@ -148,12 +148,7 @@ export default function TextChat() {
 
   return (
     <Card
-      className={cn(
-        "w-full lg:max-w-lg",
-        "mx-auto",
-        "flex flex-col",
-        "h-[400px] sm:h-[450px] lg:h-[500px]",
-      )}
+      className={cn("w-full lg:max-w-lg", "mx-auto", "flex flex-col", "h-full")}
     >
       <CardContent className="flex-1 p-0 overflow-hidden">
         <div className="h-full overflow-y-auto px-3 sm:px-4 py-3">
