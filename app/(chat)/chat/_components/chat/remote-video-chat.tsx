@@ -3,6 +3,7 @@
 import { ChatStatus, useChat } from "@/components/chat/chat.provider";
 import { cn } from "@/lib/utils";
 import { useEffect, useRef } from "react";
+import { MessagesOverlay } from "./messages-overlay";
 import { RemoteUserBadge } from "./remote-user-badge";
 import { RemoteVideo } from "./remote-video";
 
@@ -57,14 +58,22 @@ export function RemoteVideoChat() {
   const isWaiting = metadata.status === ChatStatus.WAITING;
 
   return (
-    <div className="relative w-full h-full rounded-xl rounded-l-none overflow-hidden bg-neutral-900">
+    <div
+      className={cn(
+        "relative w-full h-full rounded-none md:rounded-xl md:rounded-l-none overflow-hidden bg-neutral-900",
+        "h-screen md:h-full",
+      )}
+    >
       {metadata.status === ChatStatus.CONNECTED && (
-        <RemoteUserBadge
-          username={metadata.remoteUser.username}
-          gender={metadata.remoteUser.gender}
-          countryCode={metadata.remoteUser.countryCode}
-          state={metadata.remoteUser.state}
-        />
+        <>
+          <RemoteUserBadge
+            username={metadata.userRemote.username}
+            gender={metadata.userRemote.gender}
+            countryCode={metadata.userRemote.countryCode}
+            state={metadata.userRemote.state}
+          />
+          <MessagesOverlay />
+        </>
       )}
 
       {isWaiting && <RemoteVideo />}

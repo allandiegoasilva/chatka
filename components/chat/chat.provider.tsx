@@ -62,7 +62,7 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
   >({
     status: ChatStatus.REQUIRE_PERMISSION,
     isConnected: false,
-    remoteUser: {
+    userRemote: {
       username: "",
       gender: UserGender.MALE,
       countryCode: null,
@@ -148,7 +148,7 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
       changeChat({
         status: ChatStatus.CONNECTED,
         matchId: match.matchId,
-        remoteUser: {
+        userRemote: {
           username: match.userRemote?.username,
           gender: match.userRemote?.gender,
           countryCode: match.userRemote?.countryCode,
@@ -166,7 +166,7 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
       socket?.emit("queue:join");
       changeChat({
         status: ChatStatus.WAITING,
-        remoteUser: {
+        userRemote: {
           gender: UserGender.MALE,
           countryCode: null,
           state: null,

@@ -19,8 +19,14 @@ export function NextMatchButton() {
     });
   }
   return (
-    <Button onClick={handleNextMatch} variant="outline">
-      Próximo <ArrowRightIcon className="size-4" />
+    <Button 
+      onClick={handleNextMatch} 
+      variant="outline"
+      size="icon"
+      className="md:!h-auto md:px-4 md:py-2 md:gap-2"
+    >
+      <ArrowRightIcon className="size-4" />
+      <span className="hidden md:inline">Próximo</span>
     </Button>
   );
 }

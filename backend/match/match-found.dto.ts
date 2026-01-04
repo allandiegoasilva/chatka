@@ -3,7 +3,7 @@ import { UserGender } from "../user/enum/user-gender.enum";
 export type MatchFoundDto = {
   matchId: string;
   startOffer: boolean;
-  remoteUser: {
+  userRemote: {
     username: string;
     gender: UserGender;
     countryCode: string | null;
