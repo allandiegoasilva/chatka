@@ -5,7 +5,14 @@ import { setClientId } from "@/backend/session/set-client-id";
 import { ReplyDto } from "@/backend/shared/dtos/reply.dto";
 import { UserDto } from "../dtos/user.dto";
 
-export async function userSaveAction(): Promise<string> {
+type UserSaveDto = Partial<{
+  gender: string;
+  countryCode: string | null;
+  state: string | null;
+  ip: string | null;
+}>;
+
+export async function userSaveAction(input?: UserSaveDto): Promise<string> {
   try {
     const clientId = await getClientId();
 
@@ -16,6 +23,7 @@ export async function userSaveAction(): Promise<string> {
       },
       body: JSON.stringify({
         userId: clientId,
+        ...input,
       }),
     });
 

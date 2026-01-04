@@ -123,4 +123,8 @@
   body {
     @apply bg-background text-foreground;
   }
+  option {
+    background-color: var(--card);
+    color: var(--card-foreground);
+  }
 }
