@@ -15,7 +15,7 @@ export async function socketConnect() {
     return null;
   }
 
-  socket = io("http://localhost:3001", {
+  socket = io(`${process.env.NEXT_PUBLIC_API_URL}/socket`, {
     query: {
       clientId: clientId,
     },

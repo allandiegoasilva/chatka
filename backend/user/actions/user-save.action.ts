@@ -16,16 +16,19 @@ export async function userSaveAction(input?: UserSaveDto): Promise<string> {
   try {
     const clientId = await getClientId();
 
-    const response = await fetch(`${process.env.API_URL}/users/save`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/users/save`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: clientId,
+          ...input,
+        }),
       },
-      body: JSON.stringify({
-        userId: clientId,
-        ...input,
-      }),
-    });
+    );
 
     const result: ReplyDto<UserDto> = await response.json();
     await setClientId(result.data.id);
