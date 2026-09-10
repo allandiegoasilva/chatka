@@ -10,6 +10,10 @@ export const metadataSEO: Metadata = {
     default: title,
   },
   description: description,
+  icons: {
+    icon: "/logo.png",
+    apple: "/logo.png",
+  },
   keywords: [
     "Videochat aleatório",
     "Chat aleatório",
@@ -22,7 +26,7 @@ export const metadataSEO: Metadata = {
     "Chat aleatório de vídeo",
     "Plataforma de videochat",
   ],
-  metadataBase: new URL(`${process.env.SITE_URL}`),
+  metadataBase: new URL(process.env.SITE_URL || "http://localhost:3000"),
   alternates: {
     canonical: "/",
   },
@@ -32,7 +36,7 @@ export const metadataSEO: Metadata = {
     type: "website",
     title: title,
     description: description,
-    url: process.env.SITE_URL,
+    url: process.env.SITE_URL || "http://localhost:3000",
   },
   twitter: {
     title: title,

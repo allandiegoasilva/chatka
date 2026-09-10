@@ -1,41 +1,71 @@
 "use client";
 
+import { useChat } from "@/components/chat/chat.provider";
+import { Button } from "@/components/ui/button";
+import { useI18n } from "@/lib/i18n/provider";
+import { isStreamLive, requestUserMedia } from "@/lib/media";
 import { cn } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
+import { useState } from "react";
+import { OnlineStatus } from "../begin-chat-button/online-status";
 
 export function RemoteVideo() {
+  const { t } = useI18n();
+  const { localStream, localStreamVersion, setLocalMedia } = useChat();
+  const [isRequesting, setIsRequesting] = useState(false);
+  const [failed, setFailed] = useState(false);
+  const hasCamera = isStreamLive(localStream.current) || localStreamVersion > 0;
+
+  async function requestPermissionsAgain() {
+    setIsRequesting(true);
+    setFailed(false);
+
+    try {
+      const stream = await requestUserMedia({ force: true });
+      setLocalMedia(stream);
+    } catch {
+      setFailed(true);
+    } finally {
+      setIsRequesting(false);
+    }
+  }
+
   return (
     <div
       className={cn(
-        "absolute inset-0 flex flex-col items-center justify-center",
-        "bg-neutral-800 z-10",
-        "text-muted-foreground",
+        "absolute inset-0 z-10 flex flex-col items-center justify-center gap-5",
+        "bg-neutral-950 px-6 text-center",
       )}
     >
-      <div className="relative flex flex-col items-center gap-4">
-        {/* Efeito de brilho animado */}
-        <div className="absolute inset-0 bg-primary/20 rounded-full blur-2xl animate-pulse" />
-        
-        {/* Ícone de loading */}
-        <div className="relative">
-          <div className="absolute inset-0 bg-primary/10 rounded-full blur-xl animate-pulse" />
-          <div className="relative bg-primary/5 p-6 rounded-full">
-            <Loader2 className="size-12 text-primary animate-spin" strokeWidth={1.5} />
-          </div>
-        </div>
-
-        {/* Texto de carregamento */}
-        <div className="relative flex flex-col items-center gap-2">
-          <p className="text-sm font-medium text-foreground">
-            Aguardando conexão...
-          </p>
-          <p className="text-xs text-muted-foreground">
-            Conectando com o usuário remoto
-          </p>
-        </div>
+      <span
+        className={cn(
+          "absolute right-3 top-3 rounded-md bg-black/55 px-2 py-1",
+          "text-[11px] text-white/90",
+        )}
+      >
+        {t.preview.searching}
+      </span>
+      <Loader2 className="size-10 animate-spin text-white/80" />
+      <div className="space-y-1">
+        <p className="text-sm text-white">{t.waiting.title}</p>
+        <p className="text-xs text-white/55">{t.waiting.hint}</p>
       </div>
+      <div className="text-white/70 [&_p]:text-white/70 [&_.text-foreground]:text-white">
+        <OnlineStatus />
+      </div>
+      {failed && (
+        <p className="max-w-xs text-xs text-white/55">{t.waiting.blocked}</p>
+      )}
+      {(!hasCamera || failed) && (
+        <Button
+          type="button"
+          variant="outline"
+          disabled={isRequesting}
+          onClick={requestPermissionsAgain}
+        >
+          {isRequesting ? t.connect.requesting : t.connect.requestAgain}
+        </Button>
+      )}
     </div>
   );
 }
-
-

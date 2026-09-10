@@ -1,7 +1,7 @@
 import { MetadataRoute } from "next";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.SITE_URL as string;
+  const baseUrl = process.env.SITE_URL || "http://localhost:3000";
   const lastModified = new Date();
 
   return [

@@ -10,24 +10,26 @@ import { RemoteVideo } from "./remote-video";
 export function RemoteVideoChat() {
   const { metadata, remoteStream, receivedTrackStream } = useChat();
   const videoRef = useRef<HTMLVideoElement>(null);
+  const isWaiting = metadata.status === ChatStatus.WAITING;
 
   useEffect(() => {
     const video = videoRef.current;
-    if (!video || !remoteStream?.current) return;
+    if (!video || !remoteStream?.current) {
+      return;
+    }
 
-    // Atribui o stream ao vídeo apenas se for diferente
     if (video.srcObject !== remoteStream.current) {
       video.srcObject = remoteStream.current;
     }
 
-    // Função para reproduzir o vídeo
     const playVideo = async () => {
-      if (!video || video.srcObject !== remoteStream.current) return;
+      if (!video || video.srcObject !== remoteStream.current) {
+        return;
+      }
 
       try {
         await video.play();
       } catch (error) {
-        // Ignora erros de play interrompido
         if (
           error instanceof Error &&
           error.name !== "AbortError" &&
@@ -38,32 +40,19 @@ export function RemoteVideoChat() {
       }
     };
 
-    // Tenta reproduzir imediatamente se o vídeo já está pronto
     if (video.readyState >= 3) {
       playVideo();
     } else {
-      // Caso contrário, aguarda o evento canplay
-      const handleCanPlay = () => {
-        playVideo();
-      };
-
-      video.addEventListener("canplay", handleCanPlay, { once: true });
-
-      return () => {
-        video.removeEventListener("canplay", handleCanPlay);
-      };
+      video.addEventListener("canplay", playVideo, { once: true });
     }
-  }, [receivedTrackStream]);
 
-  const isWaiting = metadata.status === ChatStatus.WAITING;
+    return () => {
+      video.removeEventListener("canplay", playVideo);
+    };
+  }, [receivedTrackStream, remoteStream]);
 
   return (
-    <div
-      className={cn(
-        "relative w-full h-full rounded-none md:rounded-xl md:rounded-l-none overflow-hidden bg-neutral-900",
-        "h-screen md:h-full",
-      )}
-    >
+    <div className="relative h-full w-full overflow-hidden bg-neutral-950">
       {metadata.status === ChatStatus.CONNECTED && (
         <>
           <RemoteUserBadge
@@ -83,7 +72,7 @@ export function RemoteVideoChat() {
         autoPlay
         playsInline
         className={cn(
-          "w-full h-full object-cover object-center scale-x-[-1]",
+          "h-full w-full object-cover object-center scale-x-[-1]",
           isWaiting && "hidden",
         )}
       />

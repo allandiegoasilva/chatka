@@ -1,3 +1,6 @@
+import { getLocale } from "@/backend/session/get-locale";
+import { I18nProvider } from "@/lib/i18n/provider";
+import { localeHtml } from "@/lib/i18n/messages";
 import { getJsonLDString } from "@/lib/json-ld";
 import { metadataSEO } from "@/lib/seo";
 import type { Metadata } from "next";
@@ -19,15 +22,16 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = metadataSEO;
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   const jsonLd = getJsonLDString();
+  const locale = await getLocale();
 
   return (
-    <html lang="pt-br" className={inter.variable} suppressHydrationWarning>
+    <html lang={localeHtml[locale]} className={inter.variable} suppressHydrationWarning>
       <head>
         <Script
           id="json-ld"
@@ -38,7 +42,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <I18nProvider locale={locale}>{children}</I18nProvider>
       </body>
     </html>
   );

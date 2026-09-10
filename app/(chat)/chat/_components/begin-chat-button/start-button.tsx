@@ -1,13 +1,19 @@
 "use client";
 
+import { MatchType } from "@/backend/match/match-type.enum";
 import { userSaveAction } from "@/backend/user/actions/user-save.action";
 import { UserGender } from "@/backend/user/enum/user-gender.enum";
 import { ChatStatus, useChat } from "@/components/chat/chat.provider";
+import { CountryPicker } from "@/components/country-picker";
 import { Button } from "@/components/ui/button";
-import { getSocket } from "@/lib/socket-client";
+import { ShimmerButton } from "@/components/ui/shimmer-button";
+import { countryLabel, listCountries } from "@/lib/countries";
+import { localeHtml } from "@/lib/i18n/messages";
+import { useI18n } from "@/lib/i18n/provider";
+import { requestUserMedia } from "@/lib/media";
+import { socketConnect } from "@/lib/socket-client";
 import { cn } from "@/lib/utils";
-import { Video } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 type LocationData = {
   countryCode: string | null;
@@ -15,31 +21,31 @@ type LocationData = {
   ip: string | null;
 };
 
+type PermissionError = "denied" | "missing" | "busy" | "insecure" | "unknown" | null;
+
 async function getUserLocation(): Promise<LocationData> {
   try {
-    // Tenta usar a API do ipapi.co (gratuita, sem necessidade de chave)
     const response = await fetch("https://ipapi.co/json/");
     const data = await response.json();
 
     return {
-      countryCode: data.country_code || data.country || null,
+      countryCode: (data.country_code || data.country || null)?.toUpperCase() ?? null,
       state: data.region || data.region_code || null,
       ip: data.ip || null,
     };
-  } catch (error) {
-    console.error("Erro ao obter localização:", error);
-    // Fallback: tenta usar ip-api.com
+  } catch {
     try {
       const fallbackResponse = await fetch("http://ip-api.com/json/");
       const fallbackData = await fallbackResponse.json();
 
       return {
-        countryCode: fallbackData.countryCode || fallbackData.country || null,
+        countryCode:
+          (fallbackData.countryCode || fallbackData.country || null)?.toUpperCase() ??
+          null,
         state: fallbackData.regionName || fallbackData.region || null,
         ip: fallbackData.query || fallbackData.ip || null,
       };
-    } catch (fallbackError) {
-      console.error("Erro no fallback de localização:", fallbackError);
+    } catch {
       return {
         countryCode: null,
         state: null,
@@ -50,42 +56,98 @@ async function getUserLocation(): Promise<LocationData> {
 }
 
 export function StartButton() {
-  const { changeChat, localStream } = useChat();
+  const { t, locale } = useI18n();
+  const { changeChat, setLocalMedia } = useChat();
   const [gender, setGender] = useState<UserGender | null>(null);
+  const [matchType, setMatchType] = useState<MatchType>(MatchType.WORLD);
+  const [filterCountry, setFilterCountry] = useState("");
+  const [location, setLocation] = useState<LocationData>({
+    countryCode: null,
+    state: null,
+    ip: null,
+  });
+  const [permissionError, setPermissionError] = useState<PermissionError>(null);
+  const [isRequesting, setIsRequesting] = useState(false);
 
-  async function requestPermissions() {
-    if (!gender) {
-      alert("Por favor, selecione um gênero antes de iniciar a conversa.");
+  const countries = useMemo(() => {
+    const items = listCountries(localeHtml[locale]);
+    if (
+      location.countryCode &&
+      !items.some((item) => item.code === location.countryCode)
+    ) {
+      items.push({
+        code: location.countryCode,
+        name: countryLabel(location.countryCode, localeHtml[locale]),
+      });
+    }
+    return items;
+  }, [locale, location.countryCode]);
+
+  useEffect(() => {
+    getUserLocation().then((data) => {
+      setLocation(data);
+      if (data.countryCode) {
+        setFilterCountry((current) => current || data.countryCode || "");
+      }
+    });
+  }, []);
+
+  const canStart =
+    Boolean(gender) &&
+    (matchType === MatchType.WORLD || Boolean(filterCountry));
+
+  function permissionMessage(error: PermissionError) {
+    if (error === "denied") {
+      return t.connect.denied;
+    }
+    if (error === "insecure") {
+      return t.connect.insecure;
+    }
+    if (error === "missing") {
+      return t.connect.missing;
+    }
+    if (error === "busy") {
+      return t.connect.busy;
+    }
+    if (error === "unknown") {
+      return t.connect.unknown;
+    }
+    return null;
+  }
+
+  async function requestPermissions(force = false) {
+    if (!canStart || !gender) {
       return false;
     }
 
-    try {
-      // Obtém a localização do usuário
-      const location = await getUserLocation();
+    setIsRequesting(true);
+    setPermissionError(null);
 
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: true,
-        audio: true,
+    try {
+      const stream = await requestUserMedia({ force });
+      setLocalMedia(stream);
+
+      const currentLocation = location.countryCode
+        ? location
+        : await getUserLocation();
+
+      const selectedCountry =
+        matchType === MatchType.COUNTRY ? filterCountry : null;
+
+      await userSaveAction({
+        gender,
+        countryCode: currentLocation.countryCode,
+        state: currentLocation.state,
+        ip: currentLocation.ip,
+        matchType,
+        filterCountry: selectedCountry,
       });
 
-      // Define o stream local no contexto do chat e atualiza o status
-      // O stream deve permanecer ativo para ser usado no componente de vídeo
-      if (localStream) {
-        localStream.current = stream;
-      }
-
-      // Envia evento para entrar na fila com gênero e localização
-      const socket = getSocket();
-      if (socket?.connected) {
-        await userSaveAction({
-          gender,
-          countryCode: location.countryCode,
-          state: location.state,
-          ip: location.ip,
-        });
-
-        socket.emit("queue:join");
-      }
+      const socket = await socketConnect();
+      socket?.emit("queue:join", {
+        matchType,
+        filterCountry: selectedCountry,
+      });
 
       changeChat({
         status: ChatStatus.WAITING,
@@ -93,79 +155,114 @@ export function StartButton() {
       return true;
     } catch (error) {
       if (error instanceof Error) {
-        if (error.name === "NotAllowedError") {
-          alert(
-            "Permissões negadas. Por favor, permita o acesso à câmera e ao microfone nas configurações do navegador.",
-          );
+        if (error.name === "SecurityError") {
+          setPermissionError("insecure");
+        } else if (error.name === "NotAllowedError") {
+          setPermissionError("denied");
         } else if (error.name === "NotFoundError") {
-          alert(
-            "Nenhuma câmera ou microfone encontrado. Verifique se os dispositivos estão conectados.",
-          );
+          setPermissionError("missing");
         } else if (error.name === "NotReadableError") {
-          alert(
-            "Não foi possível acessar a câmera ou microfone. Eles podem estar sendo usados por outro aplicativo.",
-          );
+          setPermissionError("busy");
         } else {
-          alert(`Erro ao acessar dispositivos de mídia: ${error.message}`);
+          setPermissionError("unknown");
         }
+      } else {
+        setPermissionError("unknown");
       }
 
       return false;
+    } finally {
+      setIsRequesting(false);
     }
   }
 
   return (
-    <>
-      <div className="w-full md:w-auto space-y-4">
-        <div className="flex flex-col sm:flex-row gap-3 justify-center items-end sm:items-end">
-          <div className="flex flex-col gap-2 w-full sm:w-auto">
-            <label
-              htmlFor="gender-select"
-              className="text-sm font-medium text-foreground"
-            >
-              Selecione seu gênero
-            </label>
-            <select
-              id="gender-select"
-              value={gender || ""}
-              onChange={(e) => setGender(e.target.value as UserGender | null)}
-              className={cn(
-                "h-14 rounded-md border px-4 py-2 text-base shadow-xs",
-                "bg-card text-card-foreground",
-                "dark:bg-card dark:text-card-foreground",
-                "border-input focus-visible:border-ring",
-                "focus-visible:ring-ring/50 focus-visible:ring-[3px]",
-                "transition-[color,box-shadow] outline-none",
-                "w-full sm:w-auto min-w-[180px]",
-                "cursor-pointer",
-              )}
-            >
-              <option value="">Selecione o gênero</option>
-              <option value={UserGender.MALE}>Homem</option>
-              <option value={UserGender.FEMALE}>Mulher</option>
-              <option value={UserGender.COUPLE}>Casal</option>
-            </select>
-          </div>
+    <div className="w-full space-y-4">
+      <div className="flex flex-col gap-2">
+        <label htmlFor="gender-select" className="text-sm text-muted-foreground">
+          {t.connect.gender}
+        </label>
+        <select
+          id="gender-select"
+          value={gender || ""}
+          onChange={(e) => setGender(e.target.value as UserGender | null)}
+          className={cn(
+            "h-11 w-full rounded-md border border-input bg-background px-3 text-sm",
+            "outline-none focus-visible:border-ring",
+          )}
+        >
+          <option value="">{t.connect.genderPlaceholder}</option>
+          <option value={UserGender.MALE}>{t.connect.male}</option>
+          <option value={UserGender.FEMALE}>{t.connect.female}</option>
+          <option value={UserGender.COUPLE}>{t.connect.couple}</option>
+        </select>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <p className="text-sm text-muted-foreground">{t.connect.matchType}</p>
+        <div className="grid grid-cols-2 gap-2">
           <Button
-            size="lg"
-            onClick={requestPermissions}
-            disabled={!gender}
-            className={cn(
-              "w-full sm:w-auto px-8 h-14 text-lg font-semibold",
-              "bg-primary hover:bg-primary/90 text-primary-foreground",
-              "shadow-lg hover:shadow-xl transition-all duration-300",
-              !gender && "opacity-50 cursor-not-allowed",
-            )}
+            type="button"
+            variant={matchType === MatchType.WORLD ? "default" : "outline"}
+            onClick={() => setMatchType(MatchType.WORLD)}
           >
-            <Video className="size-5 mr-2" />
-            Iniciar conversa
+            {t.connect.world}
+          </Button>
+          <Button
+            type="button"
+            variant={matchType === MatchType.COUNTRY ? "default" : "outline"}
+            onClick={() => setMatchType(MatchType.COUNTRY)}
+          >
+            {t.connect.country}
           </Button>
         </div>
       </div>
-      <p className="text-sm text-muted-foreground text-center max-w-md">
-        Selecione seu gênero e clique no botão acima para começar a procurar por
-        alguém para conversar
-      </p>
-    </>
+
+      {matchType === MatchType.COUNTRY && (
+        <div className="flex flex-col gap-2">
+          <label
+            htmlFor="country-select"
+            className="text-sm text-muted-foreground"
+          >
+            {t.connect.countryLabel}
+          </label>
+          <CountryPicker
+            value={filterCountry}
+            countries={countries}
+            placeholder={t.connect.countryPlaceholder}
+            searchPlaceholder={t.connect.countrySearch}
+            onChange={setFilterCountry}
+          />
+        </div>
+      )}
+
+      {permissionError && (
+        <p className="text-sm text-muted-foreground">
+          {permissionMessage(permissionError)}
+        </p>
+      )}
+
+      <div className="space-y-2">
+        <ShimmerButton
+          type="button"
+          disabled={!canStart || isRequesting}
+          className="w-full h-11 disabled:opacity-50"
+          background="oklch(0.586 0.253 17.585)"
+          borderRadius="8px"
+          onClick={() => requestPermissions()}
+        >
+          {isRequesting ? t.connect.requesting : t.connect.start}
+        </ShimmerButton>
+        <Button
+          type="button"
+          variant="outline"
+          className="w-full"
+          disabled={!canStart || isRequesting}
+          onClick={() => requestPermissions(true)}
+        >
+          {t.connect.requestAgain}
+        </Button>
+      </div>
+    </div>
   );
 }

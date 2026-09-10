@@ -5,6 +5,7 @@ import { ChatStatus, useChat } from "@/components/chat/chat.provider";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { useI18n } from "@/lib/i18n/provider";
 import { getSocket } from "@/lib/socket-client";
 import { cn } from "@/lib/utils";
 import { FormEvent, useCallback, useEffect, useRef, useState } from "react";
@@ -20,6 +21,7 @@ export default function TextChat() {
   const [input, setInput] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const { t } = useI18n();
   const { metadata } = useChat();
   const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -149,11 +151,8 @@ export default function TextChat() {
   return (
     <Card
       className={cn(
-        "w-full lg:max-w-lg",
-        "mx-auto",
-        "flex flex-col",
-        "max-h-[calc(100vh-2rem)] md:max-h-[calc(100vh-3rem)] lg:max-h-[calc(100vh-5rem)]",
-        "h-full",
+        "flex h-full w-full flex-col",
+        "max-h-[calc(100dvh-2rem)] lg:max-h-none",
       )}
     >
       <CardContent className="flex-1 p-0 overflow-hidden flex flex-col min-h-0">
@@ -161,7 +160,7 @@ export default function TextChat() {
           <div className="space-y-3">
             {messages.length === 0 && (
               <div className="text-center text-muted-foreground text-sm">
-                Envie uma mensagem para começar o chat.
+                {t.chat.empty}
               </div>
             )}
             {messages.map((message, index) => (
@@ -221,11 +220,11 @@ export default function TextChat() {
             value={input}
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
-            placeholder="Digite sua mensagem..."
+            placeholder={t.chat.placeholder}
             className="flex-1 text-sm sm:text-base"
           />
           <Button type="submit" disabled={!input.trim()}>
-            Enviar
+            {t.chat.send}
           </Button>
         </form>
       </CardFooter>

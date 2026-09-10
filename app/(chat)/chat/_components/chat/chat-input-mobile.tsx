@@ -4,11 +4,13 @@ import { userGetIdAction } from "@/backend/user/actions/user-get-id.action";
 import { useChat } from "@/components/chat/chat.provider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useI18n } from "@/lib/i18n/provider";
 import { getSocket } from "@/lib/socket-client";
 import { FormEvent, useEffect, useState } from "react";
 
 export function ChatInputMobile() {
   const [input, setInput] = useState("");
+  const { t } = useI18n();
   const { metadata } = useChat();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -94,11 +96,11 @@ export function ChatInputMobile() {
         value={input}
         onChange={handleInputChange}
         onKeyDown={handleKeyDown}
-        placeholder="Digite sua mensagem..."
+        placeholder={t.chat.placeholder}
         className="flex-1 text-sm"
       />
       <Button type="submit" disabled={!input.trim()} size="default">
-        Enviar
+        {t.chat.send}
       </Button>
     </form>
   );

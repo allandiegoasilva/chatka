@@ -15,47 +15,43 @@ export function Chat() {
   return (
     <main
       className={cn(
-        "min-h-screen",
-        "flex flex-col lg:grid lg:grid-cols-[1fr_auto]",
-        "p-0 md:p-4 sm:p-6 lg:p-10",
-        "gap-4 lg:gap-5",
+        "relative flex min-h-dvh flex-col bg-background",
+        "lg:grid lg:h-dvh lg:grid-cols-[minmax(0,1fr)_22rem] lg:overflow-hidden",
+        "md:p-4 lg:gap-4",
       )}
     >
-      {/* Vídeo Layout */}
-      <div className="relative w-full h-screen md:h-auto lg:h-[calc(100vh-5rem)] md:flex md:flex-col">
-        <div className="relative w-full flex-1 md:grid md:grid-cols-2 gap-2 lg:gap-0 min-h-0">
-          {/* Vídeo local - oculto no mobile (fica flutuante) */}
-          <div className="hidden md:flex col-span-1 w-full h-full border border-r rounded-l-xl overflow-hidden min-h-0">
+      <section className="flex min-h-0 flex-1 flex-col">
+        <div
+          className={cn(
+            "grid min-h-0 flex-1 overflow-hidden",
+            "grid-rows-2 md:grid-rows-1 md:grid-cols-2",
+            "h-[100dvh] md:h-auto lg:h-full",
+            "md:rounded-xl md:border",
+            !isWaiting && "max-md:h-[calc(100dvh-4.5rem)]",
+          )}
+        >
+          <div className="min-h-0 border-b border-white/10 md:border-b-0 md:border-r">
             <LocalVideoChat />
           </div>
-          {/* Vídeo local flutuante no mobile */}
-          <div className="block md:hidden">
-            <LocalVideoChat />
-          </div>
-          
-          {/* Vídeo remoto - ocupa 100% no mobile */}
-          <div className="fixed inset-0 md:static md:col-span-1 flex w-full h-full border-0 md:border md:border-l rounded-none md:rounded-r-xl overflow-hidden min-h-0">
+          <div className="min-h-0">
             <RemoteVideoChat />
           </div>
         </div>
 
-        {/* NextButton - Desktop */}
         {!isWaiting && (
-          <div className="hidden md:flex w-full items-center justify-end mt-2 shrink-0 py-2">
+          <div className="hidden w-full shrink-0 items-center justify-end py-2 md:flex">
             <NextMatchButton />
           </div>
         )}
-      </div>
+      </section>
 
-      {/* TextChat - Desktop */}
-      <div className="hidden md:block w-full lg:w-auto flex items-start justify-center lg:justify-start">
+      <div className="hidden min-h-0 md:flex md:items-stretch">
         <TextChat />
       </div>
 
-      {/* Input Chat + Next Button no mobile */}
       {!isWaiting && (
-        <div className="fixed bottom-0 left-0 right-0 z-40 md:hidden p-2">
-          <div className="flex items-center gap-2 w-full">
+        <div className="fixed bottom-0 left-0 right-0 z-40 p-2 md:hidden">
+          <div className="flex w-full items-center gap-2">
             <ChatInputMobile />
             <NextMatchButton />
           </div>

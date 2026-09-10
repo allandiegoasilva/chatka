@@ -1,56 +1,48 @@
 "use client";
 
 import { useChat } from "@/components/chat/chat.provider";
+import { NumberTicker } from "@/components/ui/number-ticker";
+import { useI18n } from "@/lib/i18n/provider";
 import { getSocket } from "@/lib/socket-client";
-import { Users } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export function OnlineStatus() {
+  const { t } = useI18n();
   const { metadata } = useChat();
   const [onlineUsers, setOnlineUsers] = useState(0);
 
-  function loadStats() {
+  useEffect(() => {
     const socket = getSocket();
     if (!socket) {
       return;
     }
 
-    socket.emit("users:stats", (stats: { total: number }) => {
-      setOnlineUsers(stats.total);
-    });
-  }
+    function loadStats() {
+      const current = getSocket();
+      if (!current) {
+        return;
+      }
 
-  function loadStatsWithInterval() {
+      current.emit("users:stats", (stats: { total: number }) => {
+        setOnlineUsers(stats.total);
+      });
+    }
+
     loadStats();
-    setInterval(() => {
-      loadStats();
-    }, 3000);
-  }
+    const interval = setInterval(loadStats, 3000);
 
-  useEffect(() => {
-    loadStatsWithInterval();
+    return () => {
+      clearInterval(interval);
+    };
   }, [metadata.isConnected]);
 
   return (
-    <div className="w-full flex items-center justify-center gap-4 p-4 rounded-xl bg-muted/30 border">
-      <div className="flex items-center gap-3">
-        <div className="relative">
-          <div className="absolute inset-0 bg-green-500/20 rounded-full blur-md animate-pulse" />
-          <div className="relative flex items-center gap-2">
-            <div className="size-3 bg-green-500 rounded-full animate-pulse" />
-            <span className="text-sm font-medium text-muted-foreground">
-              Online agora
-            </span>
-          </div>
-        </div>
-      </div>
-      <div className="flex items-center gap-2 text-sm">
-        <Users className="size-4 text-primary" />
-        <span className="font-semibold text-foreground">
-          {onlineUsers.toLocaleString("pt-BR")}
-        </span>
-        <span className="text-muted-foreground">usuários</span>
-      </div>
-    </div>
+    <p className="text-sm text-muted-foreground">
+      <NumberTicker
+        value={onlineUsers}
+        className="text-foreground tracking-normal"
+      />{" "}
+      {t.connect.online}
+    </p>
   );
 }

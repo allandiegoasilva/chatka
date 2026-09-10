@@ -4,7 +4,8 @@ import { MatchFoundDto } from "@/backend/match/match-found.dto";
 import { userGetIdAction } from "@/backend/user/actions/user-get-id.action";
 import { userSaveAction } from "@/backend/user/actions/user-save.action";
 import { UserGender } from "@/backend/user/enum/user-gender.enum";
-import { getSocket, socketConnect } from "@/lib/socket-client";
+import { getLiveUserMedia, holdUserMedia, stopMediaStream } from "@/lib/media";
+import { socketConnect } from "@/lib/socket-client";
 import { createWebrtcClient } from "@/lib/webrtc-client";
 import {
   createContext,
@@ -47,15 +48,19 @@ export type ChatContextProps = {
   localStream: RefObject<MediaStream | null>;
   remoteStream: RefObject<MediaStream | null>;
   receivedTrackStream: number;
+  localStreamVersion: number;
+  setLocalMedia(stream: MediaStream): void;
 };
 
 const ChatContext = createContext({});
 
 export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
-  let localStreamRef = useRef<MediaStream | null>(null);
-  let remoteStreamRef = useRef<MediaStream | null>(null);
-  let webRTCRef = useRef<RTCPeerConnection | null>(null);
-  let userId: string | undefined;
+  const localStreamRef = useRef<MediaStream | null>(null);
+  const remoteStreamRef = useRef<MediaStream | null>(null);
+  const webRTCRef = useRef<RTCPeerConnection | null>(null);
+  const userIdRef = useRef<string | undefined>(undefined);
+  const matchIdRef = useRef<string | undefined>(undefined);
+  const pendingCandidatesRef = useRef<RTCIceCandidateInit[]>([]);
 
   const [metadata, setMetadata] = useState<
     Omit<ChatMetadata, "localStream" | "remoteStream">
@@ -71,20 +76,58 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
   });
 
   const [receivedTrackStream, setReceivedTrackStream] = useState<number>(0);
+  const [localStreamVersion, setLocalStreamVersion] = useState(0);
 
-  async function loadUserId() {
-    await userSaveAction();
-    userId = await userGetIdAction();
-    changeChat({
-      userId: userId,
+  function setLocalMedia(stream: MediaStream) {
+    if (localStreamRef.current && localStreamRef.current !== stream) {
+      stopMediaStream(localStreamRef.current);
+    }
+
+    localStreamRef.current = stream;
+    holdUserMedia(stream);
+    setLocalStreamVersion((current) => current + 1);
+
+    const pc = webRTCRef.current;
+    if (!pc) {
+      return;
+    }
+
+    stream.getTracks().forEach((track) => {
+      const sender = pc.getSenders().find((item) => item.track?.kind === track.kind);
+      if (sender) {
+        sender.replaceTrack(track);
+        return;
+      }
+
+      pc.addTrack(track, stream);
     });
   }
 
   function changeChat(input: Partial<ChatMetadata>) {
-    setMetadata({
-      ...metadata,
+    if (input.matchId !== undefined) {
+      matchIdRef.current = input.matchId;
+    }
+    if (input.userId !== undefined) {
+      userIdRef.current = input.userId;
+    }
+
+    setMetadata((prev) => ({
+      ...prev,
       ...input,
-    });
+    }));
+  }
+
+  async function flushPendingCandidates(pc: RTCPeerConnection) {
+    if (!pc.remoteDescription) {
+      return;
+    }
+
+    const pending = pendingCandidatesRef.current;
+    pendingCandidatesRef.current = [];
+
+    for (const candidate of pending) {
+      await pc.addIceCandidate(candidate);
+    }
   }
 
   async function listenEvents() {
@@ -94,7 +137,11 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
       return;
     }
 
-    async function localWebRTCClient(startOffer: boolean) {
+    changeChat({
+      isConnected: true,
+    });
+
+    async function localWebRTCClient(startOffer: boolean, matchId: string) {
       if (!webRTCRef.current) {
         return;
       }
@@ -106,37 +153,34 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
         );
       });
 
-      // INICIAR A OFFER SÓ DE UM LADO
       if (startOffer) {
-        const offer = await webRTCRef.current!.createOffer();
-        await webRTCRef.current!.setLocalDescription(offer);
+        const offer = await webRTCRef.current.createOffer();
+        await webRTCRef.current.setLocalDescription(offer);
         socket!.emit("match:offer", {
-          matchId: metadata.matchId,
-          userId: userId,
+          matchId,
+          userId: userIdRef.current,
           offer,
         });
       }
     }
 
-    function eventWebRTCClient() {
+    function eventWebRTCClient(matchId: string) {
       if (!webRTCRef.current) {
         return;
       }
 
-      webRTCRef.current!.ontrack = (event: RTCTrackEvent) => {
+      webRTCRef.current.ontrack = (event: RTCTrackEvent) => {
         remoteStreamRef.current = event.streams[0];
-        if (receivedTrackStream === 0) {
-          setReceivedTrackStream(receivedTrackStream + 1);
-        }
+        setReceivedTrackStream((current) => (current === 0 ? 1 : current));
       };
 
-      webRTCRef.current!.onicecandidate = (
+      webRTCRef.current.onicecandidate = (
         event: RTCPeerConnectionIceEvent,
       ) => {
-        if (event?.candidate && socket) {
+        if (event.candidate && socket) {
           socket.emit("match:candidate", {
-            matchId: metadata.matchId,
-            userId: userId,
+            matchId,
+            userId: userIdRef.current,
             candidate: event.candidate,
           });
         }
@@ -144,7 +188,7 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
     }
 
     socket.on("match:found", (match: MatchFoundDto) => {
-      console.log(match);
+      pendingCandidatesRef.current = [];
       changeChat({
         status: ChatStatus.CONNECTED,
         matchId: match.matchId,
@@ -158,14 +202,20 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
 
       webRTCRef.current = createWebrtcClient();
 
-      localWebRTCClient(match.startOffer);
-      eventWebRTCClient();
+      localWebRTCClient(match.startOffer, match.matchId);
+      eventWebRTCClient(match.matchId);
     });
 
     socket.on("match:ended", () => {
-      socket?.emit("queue:join");
+      webRTCRef.current?.close();
+      webRTCRef.current = null;
+      remoteStreamRef.current = null;
+      pendingCandidatesRef.current = [];
+      matchIdRef.current = undefined;
+      socket.emit("queue:join");
       changeChat({
         status: ChatStatus.WAITING,
+        matchId: undefined,
         userRemote: {
           gender: UserGender.MALE,
           countryCode: null,
@@ -178,54 +228,87 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
     });
 
     socket.on("match:offer", async (offer) => {
-      const pc = webRTCRef.current!;
+      const pc = webRTCRef.current;
+      if (!pc) {
+        return;
+      }
+
       await pc.setRemoteDescription(offer);
+      await flushPendingCandidates(pc);
 
       const answer = await pc.createAnswer();
       await pc.setLocalDescription(answer);
 
-      socket!.emit("match:answer", {
-        matchId: metadata.matchId,
-        userId: userId,
+      socket.emit("match:answer", {
+        matchId: matchIdRef.current,
+        userId: userIdRef.current,
         answer,
       });
     });
 
-    const pendingCandidates: RTCIceCandidate[] = [];
     socket.on("match:candidate", async (candidate) => {
       if (!candidate) {
         return;
       }
 
-      const pc = webRTCRef.current!;
-
-      if (pc.remoteDescription) {
-        return await webRTCRef.current!.addIceCandidate(candidate);
+      const pc = webRTCRef.current;
+      if (!pc) {
+        return;
       }
 
-      pendingCandidates.push(candidate);
+      if (pc.remoteDescription) {
+        await pc.addIceCandidate(candidate);
+        return;
+      }
+
+      pendingCandidatesRef.current.push(candidate);
     });
 
-    socket.on("match:answer", (answer) => {
-      webRTCRef.current!.setRemoteDescription(answer);
-    });
-  }
+    socket.on("match:answer", async (answer) => {
+      const pc = webRTCRef.current;
+      if (!pc) {
+        return;
+      }
 
-  function checkConnection() {
-    const socket = getSocket();
-    if (!socket) {
-      return;
-    }
-
-    changeChat({
-      isConnected: true,
+      await pc.setRemoteDescription(answer);
+      await flushPendingCandidates(pc);
     });
   }
 
   useEffect(() => {
-    loadUserId();
-    listenEvents();
-    checkConnection();
+    const live = getLiveUserMedia();
+    if (!live) {
+      return;
+    }
+
+    localStreamRef.current = live;
+    holdUserMedia(live);
+    setLocalStreamVersion((current) => current + 1);
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+
+    async function boot() {
+      await userSaveAction();
+      const userId = await userGetIdAction();
+      if (!active) {
+        return;
+      }
+
+      userIdRef.current = userId;
+      changeChat({
+        userId,
+      });
+
+      await listenEvents();
+    }
+
+    boot();
+
+    return () => {
+      active = false;
+    };
   }, []);
 
   return (
@@ -236,6 +319,8 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
         localStream: localStreamRef,
         remoteStream: remoteStreamRef,
         receivedTrackStream,
+        localStreamVersion,
+        setLocalMedia,
       }}
     >
       {children}
