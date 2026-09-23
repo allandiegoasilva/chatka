@@ -6,7 +6,7 @@ const siteUrl = process.env.SITE_URL || "http://localhost:3000";
 const title =
   "Chatka — Chat anônimo sem login | Random video chat | Omegle alternative";
 const description =
-  "Anonymous chat without login. Chatka é um videochat aleatório tipo Omegle, Omeagle, Chatroulette e OmeTV: conversa com estranhos por vídeo e texto, sem cadastro, sem e-mail e sem perfil. Random video chat, talk to strangers, chat anónimo sin registro.";
+  "Anonymous chat without login. Chatka é um videochat aleatório tipo Omegle, Omeagle, Chatroulette e OmeTV: conversa com estranhos por vídeo e texto, sem cadastro, sem e-mail e sem perfil. Chat naturista +18. Random video chat, talk to strangers, chat anónimo sin registro.";
 
 export const metadataSEO: Metadata = {
   title: {
@@ -17,8 +17,12 @@ export const metadataSEO: Metadata = {
   applicationName: "Chatka",
   category: "Communication",
   icons: {
-    icon: "/logo.png",
-    apple: "/logo.png",
+    icon: [
+      { url: "/favicon.ico" },
+      { url: "/favicon-32.png", sizes: "32x32", type: "image/png" },
+      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+    ],
+    apple: "/apple-touch-icon.png",
   },
   keywords: [
     ...seoTerms,

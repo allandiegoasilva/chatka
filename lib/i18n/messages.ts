@@ -32,9 +32,9 @@ export const messages = {
     hero: {
       title: "Fala com um estranho. Agora.",
       subtitle:
-        "Vídeo aleatório e chat de texto. Sem conta, sem e-mail, sem perfil.",
+        "Anonymous chat without login. Vídeo aleatório e chat de texto, sem conta, sem e-mail, sem perfil. Chat naturista +18.",
       cta: "Entrar no chat",
-      note: "Câmera e microfone ficam só no seu navegador.",
+      note: "Só maiores de 18. Câmera e microfone ficam no seu navegador.",
     },
     preview: {
       you: "Você",
@@ -63,16 +63,18 @@ export const messages = {
       title: "Do jeito que tem que ser",
       items: [
         {
-          title: "Vídeo e texto",
-          description: "A pessoa na frente. O chat do lado.",
+          title: "Naturista",
+          description:
+            "Espaço para quem vive o naturismo. Corpo livre, sem julgamento.",
         },
         {
-          title: "Próximo, sem drama",
-          description: "Um clique e a conversa acaba. Outra começa.",
+          title: "Anônimo e +18",
+          description: "Sem conta. Sem nome real. Só adulto.",
         },
         {
-          title: "Anônimo",
-          description: "Sem conta. Sem nome real. Sem rastro.",
+          title: "Moedas, em breve",
+          description:
+            "Vai dar para doar uma grana, mandar um presentinho e transacionar dentro do chat.",
         },
       ],
     },
@@ -82,7 +84,7 @@ export const messages = {
     },
     seo: {
       title: "Chat anônimo sem login.",
-      body: "Chatka é um chat aleatório de vídeo e texto, tipo Omegle, Omeagle, Chatroulette e OmeTV: anonymous chat without login, random video chat, talk to strangers. Sem cadastro, sem e-mail, sem perfil. Entra, libera a câmera e conversa com um estranho do mundo todo.",
+      body: "Chatka é um chat aleatório de vídeo e texto, tipo Omegle, Omeagle, Chatroulette e OmeTV: anonymous chat without login, random video chat, talk to strangers. Sem cadastro, sem e-mail, sem perfil. Também é um chat naturista +18. Entra, libera a câmera e conversa com um estranho do mundo todo.",
     },
     faq: {
       title: "Perguntas",
@@ -98,9 +100,14 @@ export const messages = {
             "Não. É anonymous chat without login: você entra anônimo, sem cadastro, sem e-mail e sem perfil.",
         },
         {
+          question: "É um chat naturista?",
+          answer:
+            "Sim. O Chatka é para naturistas e naturalistas maiores de 18 anos. Corpo livre, respeito e sem menor de idade.",
+        },
+        {
           question: "É tipo Omegle ou Omeagle?",
           answer:
-            "Sim. Chatka é uma alternativa ao Omegle, Omeagle, Chatroulette e OmeTV: videochat aleatório com estranhos, grátis e sem login.",
+            "Sim, no formato. Chatka é uma alternativa ao Omegle, Omeagle, Chatroulette e OmeTV, feita para o público naturista: videochat aleatório, grátis e sem login.",
         },
         {
           question: "É grátis?",
@@ -115,11 +122,16 @@ export const messages = {
           answer:
             "Não. O Chatka é só para maiores de 18 anos. Criança e adolescente não podem entrar.",
         },
+        {
+          question: "Vai ter moedas ou doação?",
+          answer:
+            "Sim. Em breve você vai poder comprar moedas e doar uma grana para quem estiver no chat.",
+        },
       ],
     },
     connect: {
       title: "Chatka",
-      subtitle: "Vídeo aleatório. Sem conta.",
+      subtitle: "Chat naturista. +18. Sem conta.",
       online: "online",
       gender: "Gênero",
       genderPlaceholder: "Selecionar",
@@ -183,7 +195,7 @@ export const messages = {
         },
         {
           title: "2. O que é o Chatka",
-          body: "O Chatka é um chat aleatório de vídeo e texto, sem conta e sem login. Você pode ser conectado a qualquer pessoa adulta online. Não há garantia de com quem você vai falar.",
+          body: "O Chatka é um chat aleatório de vídeo e texto para naturistas e naturalistas, sem conta e sem login. Só maiores de 18 anos. Você pode ser conectado a qualquer pessoa adulta da comunidade. Não há garantia de com quem você vai falar.",
         },
         {
           title: "3. Conduta",
@@ -218,9 +230,10 @@ export const messages = {
     },
     hero: {
       title: "Talk to a stranger. Now.",
-      subtitle: "Random video and text chat. No account, no email, no profile.",
+      subtitle:
+        "Anonymous chat without login. Random video and text chat. No account, no email, no profile. Naturist chat, 18+.",
       cta: "Start chatting",
-      note: "Camera and mic stay in your browser.",
+      note: "Adults only. Camera and mic stay in your browser.",
     },
     preview: {
       you: "You",
@@ -249,16 +262,18 @@ export const messages = {
       title: "Just the product",
       items: [
         {
-          title: "Video and text",
-          description: "The person in front. Chat on the side.",
+          title: "Naturist",
+          description:
+            "A space for people who live naturism. Free body, no judgment.",
         },
         {
-          title: "Next, no drama",
-          description: "One click ends it. Another one starts.",
+          title: "Anonymous and 18+",
+          description: "No account. No real name. Adults only.",
         },
         {
-          title: "Anonymous",
-          description: "No account. No real name. No trail.",
+          title: "Coins, coming soon",
+          description:
+            "You will be able to tip, donate, and transact inside the chat.",
         },
       ],
     },
@@ -268,7 +283,7 @@ export const messages = {
     },
     seo: {
       title: "Anonymous chat without login.",
-      body: "Chatka is a random video and text chat, like Omegle, Omeagle, Chatroulette and OmeTV: anonymous chat without login, talk to strangers, no signup. Open the browser, allow the camera, and meet someone from anywhere.",
+      body: "Chatka is a random video and text chat, like Omegle, Omeagle, Chatroulette and OmeTV: anonymous chat without login, talk to strangers, no signup. It is also a naturist chat for adults 18+. Open the browser, allow the camera, and meet someone from anywhere.",
     },
     faq: {
       title: "FAQ",
@@ -284,9 +299,14 @@ export const messages = {
             "No. This is anonymous chat without login: no account, no email, no profile.",
         },
         {
+          question: "Is this a naturist chat?",
+          answer:
+            "Yes. Chatka is for naturists 18 and older. Free body, respect, and no minors.",
+        },
+        {
           question: "Is it like Omegle or Omeagle?",
           answer:
-            "Yes. Chatka is an Omegle, Omeagle, Chatroulette and OmeTV alternative: free random video chat with strangers, no signup.",
+            "Yes, in format. Chatka is an Omegle, Omeagle, Chatroulette and OmeTV alternative built for the naturist community: random video chat, free, no signup.",
         },
         {
           question: "Is it free?",
@@ -301,11 +321,16 @@ export const messages = {
           answer:
             "No. Chatka is only for adults 18 and older. Children and teenagers are not allowed.",
         },
+        {
+          question: "Will there be coins or donations?",
+          answer:
+            "Yes. Soon you will be able to buy coins and tip people in the chat.",
+        },
       ],
     },
     connect: {
       title: "Chatka",
-      subtitle: "Random video. No account.",
+      subtitle: "Naturist chat. 18+. No account.",
       online: "online",
       gender: "Gender",
       genderPlaceholder: "Select",
@@ -368,7 +393,7 @@ export const messages = {
         },
         {
           title: "2. What Chatka is",
-          body: "Chatka is a random video and text chat with no account and no login. You may be paired with any adult online. There is no guarantee of who you will meet.",
+          body: "Chatka is a random video and text chat for naturists, with no account and no login. Adults 18 and older only. You may be paired with any adult in the community. There is no guarantee of who you will meet.",
         },
         {
           title: "3. Conduct",
@@ -404,9 +429,9 @@ export const messages = {
     hero: {
       title: "Habla con un extraño. Ahora.",
       subtitle:
-        "Video aleatorio y chat de texto. Sin cuenta, sin correo, sin perfil.",
+        "Anonymous chat without login. Video aleatorio y chat de texto. Sin cuenta, sin correo, sin perfil. Chat naturista +18.",
       cta: "Entrar al chat",
-      note: "Cámara y micrófono se quedan en tu navegador.",
+      note: "Solo mayores de 18. Cámara y micrófono se quedan en tu navegador.",
     },
     preview: {
       you: "Tú",
@@ -435,16 +460,18 @@ export const messages = {
       title: "Así de simple",
       items: [
         {
-          title: "Video y texto",
-          description: "La persona al frente. El chat al lado.",
+          title: "Naturista",
+          description:
+            "Un espacio para quien vive el naturismo. Cuerpo libre, sin juicio.",
         },
         {
-          title: "Siguiente, sin drama",
-          description: "Un clic termina. Otro empieza.",
+          title: "Anónimo y +18",
+          description: "Sin cuenta. Sin nombre real. Solo adultos.",
         },
         {
-          title: "Anónimo",
-          description: "Sin cuenta. Sin nombre real. Sin rastro.",
+          title: "Monedas, pronto",
+          description:
+            "Vas a poder donar, enviar un regalo y transaccionar dentro del chat.",
         },
       ],
     },
@@ -454,7 +481,7 @@ export const messages = {
     },
     seo: {
       title: "Chat anónimo sin registro.",
-      body: "Chatka es un videochat aleatorio de video y texto, como Omegle, Omeagle, Chatroulette y OmeTV: anonymous chat without login, chat sin cuenta, hablar con extraños. Entras, das la cámara y hablas con alguien de cualquier país.",
+      body: "Chatka es un videochat aleatorio de video y texto, como Omegle, Omeagle, Chatroulette y OmeTV: anonymous chat without login, chat sin cuenta, hablar con extraños. También es un chat naturista +18. Entras, das la cámara y hablas con alguien de cualquier país.",
     },
     faq: {
       title: "Preguntas",
@@ -470,9 +497,14 @@ export const messages = {
             "No. Es anonymous chat without login: entras anónimo, sin registro, sin correo y sin perfil.",
         },
         {
+          question: "¿Es un chat naturista?",
+          answer:
+            "Sí. Chatka es para naturistas mayores de 18 años. Cuerpo libre, respeto y sin menores.",
+        },
+        {
           question: "¿Es como Omegle u Omeagle?",
           answer:
-            "Sí. Chatka es una alternativa a Omegle, Omeagle, Chatroulette y OmeTV: videochat aleatorio gratis, sin login.",
+            "Sí, en el formato. Chatka es una alternativa a Omegle, Omeagle, Chatroulette y OmeTV hecha para el público naturista: videochat aleatorio, gratis y sin login.",
         },
         {
           question: "¿Es gratis?",
@@ -487,11 +519,16 @@ export const messages = {
           answer:
             "No. Chatka es solo para mayores de 18 años. Niños y adolescentes no pueden entrar.",
         },
+        {
+          question: "¿Habrá monedas o donaciones?",
+          answer:
+            "Sí. Pronto vas a poder comprar monedas y donar una propina a quien esté en el chat.",
+        },
       ],
     },
     connect: {
       title: "Chatka",
-      subtitle: "Video aleatorio. Sin cuenta.",
+      subtitle: "Chat naturista. +18. Sin cuenta.",
       online: "en línea",
       gender: "Género",
       genderPlaceholder: "Seleccionar",
@@ -554,7 +591,7 @@ export const messages = {
         },
         {
           title: "2. Qué es Chatka",
-          body: "Chatka es un chat aleatorio de video y texto, sin cuenta y sin login. Puedes ser conectado con cualquier persona adulta en línea. No hay garantía de con quién vas a hablar.",
+          body: "Chatka es un chat aleatorio de video y texto para naturistas, sin cuenta y sin login. Solo mayores de 18 años. Puedes ser conectado con cualquier persona adulta de la comunidad. No hay garantía de con quién vas a hablar.",
         },
         {
           title: "3. Conducta",

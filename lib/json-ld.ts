@@ -16,6 +16,7 @@ export function getJsonLD() {
           "Chatka Omegle",
           "Chatka Omeagle",
           "Anonymous chat without login",
+          "Chat naturista",
         ],
         applicationCategory: "CommunicationApplication",
         operatingSystem: "Web Browser",
@@ -25,7 +26,7 @@ export function getJsonLD() {
           priceCurrency: "USD",
         },
         description:
-          "Anonymous chat without login. Random video chat and text chat with strangers. Omegle, Omeagle, Chatroulette and OmeTV alternative. Sem cadastro.",
+          "Anonymous chat without login. Random video chat and text chat with strangers. Omegle, Omeagle, Chatroulette and OmeTV alternative. Chat naturista +18. Sem cadastro.",
         url: siteUrl,
         browserRequirements: "Requires JavaScript. Requires HTML5.",
         featureList: [
@@ -36,6 +37,7 @@ export function getJsonLD() {
           "Videochat aleatório",
           "Chat anónimo sin registro",
           "Omegle alternative",
+          "Chat naturista +18",
           "No signup video chat",
         ],
         keywords: seoTerms.join(", "),
@@ -65,7 +67,7 @@ export function getJsonLD() {
         url: siteUrl,
         name: "Chatka",
         description:
-          "Anonymous chat without login. Chat aleatório de vídeo e texto, alternativa ao Omegle.",
+          "Anonymous chat without login. Chat aleatório de vídeo e texto, alternativa ao Omegle. Chat naturista +18.",
         publisher: {
           "@id": `${siteUrl}#organization`,
         },

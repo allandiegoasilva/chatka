@@ -1,4 +1,13 @@
 export const seoTerms = [
+  "chat naturista",
+  "chat naturalista",
+  "naturist chat",
+  "nudist chat",
+  "naturist video chat",
+  "anonymous nudist chat",
+  "chat nudista",
+  "videochat naturista",
+  "chat naturista +18",
   "anonymous chat without login",
   "random video chat",
   "talk to strangers",
@@ -43,4 +52,8 @@ export const heroTerms = [
   "chat sem login",
   "Chatroulette",
   "Omeagle",
+  "chat naturista",
+  "naturist chat",
+  "nudist chat",
+  "chat naturalista",
 ] as const;
