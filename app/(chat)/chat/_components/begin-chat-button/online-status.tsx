@@ -37,12 +37,15 @@ export function OnlineStatus() {
   }, [metadata.isConnected]);
 
   return (
-    <p className="text-sm text-muted-foreground">
-      <NumberTicker
-        value={onlineUsers}
-        className="text-foreground tracking-normal"
-      />{" "}
-      {t.connect.online}
+    <p className="flex items-center gap-2 text-sm text-muted-foreground">
+      <span className="size-2 shrink-0 rounded-full bg-emerald-500" />
+      <span>
+        <NumberTicker
+          value={onlineUsers}
+          className="text-foreground tracking-normal"
+        />{" "}
+        {t.connect.online}
+      </span>
     </p>
   );
 }

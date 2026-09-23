@@ -24,7 +24,7 @@ export function LocalVideoChat() {
   const { metadata, localStream, localStreamVersion } = useChat();
   const videoRef = useRef<HTMLVideoElement>(null);
   const dragOffsetRef = useRef({ x: 0, y: 0 });
-  const [position, setPosition] = useState({ x: PIP_MARGIN, y: PIP_MARGIN });
+  const [position, setPosition] = useState({ x: PIP_MARGIN, y: 64 });
   const [isDragging, setIsDragging] = useState(false);
 
   useEffect(() => {
@@ -32,7 +32,7 @@ export function LocalVideoChat() {
       setPosition((current) =>
         clampPosition(
           window.innerWidth - PIP_WIDTH - 16,
-          current.y === PIP_MARGIN ? 16 : current.y,
+          current.y <= 64 ? 64 : current.y,
         ),
       );
     };

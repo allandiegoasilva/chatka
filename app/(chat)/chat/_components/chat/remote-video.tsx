@@ -7,7 +7,6 @@ import { isStreamLive, requestUserMedia } from "@/lib/media";
 import { cn } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
-import { OnlineStatus } from "../begin-chat-button/online-status";
 
 export function RemoteVideo() {
   const { t } = useI18n();
@@ -49,9 +48,6 @@ export function RemoteVideo() {
       <div className="space-y-1">
         <p className="text-sm text-white">{t.waiting.title}</p>
         <p className="text-xs text-white/55">{t.waiting.hint}</p>
-      </div>
-      <div className="text-white/70 [&_p]:text-white/70 [&_.text-foreground]:text-white">
-        <OnlineStatus />
       </div>
       {failed && (
         <p className="max-w-xs text-xs text-white/55">{t.waiting.blocked}</p>
