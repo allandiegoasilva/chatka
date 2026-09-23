@@ -4,6 +4,7 @@ import { userGetIdAction } from "@/backend/user/actions/user-get-id.action";
 import { useChat } from "@/components/chat/chat.provider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { clampMessage, MESSAGE_MAX_LENGTH } from "@/lib/chat-limits";
 import { useI18n } from "@/lib/i18n/provider";
 import { getSocket } from "@/lib/socket-client";
 import { FormEvent, useEffect, useState } from "react";
@@ -12,10 +13,6 @@ export function ChatInputMobile() {
   const [input, setInput] = useState("");
   const { t } = useI18n();
   const { metadata } = useChat();
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInput(e.target.value);
-  };
 
   async function sendMessage(content: string) {
     const socket = getSocket();
@@ -44,12 +41,11 @@ export function ChatInputMobile() {
   async function handleSend(e: FormEvent) {
     e.preventDefault();
 
-    const trimmedInput = input.trim();
+    const trimmedInput = clampMessage(input);
     if (!trimmedInput) return;
 
     await sendMessage(trimmedInput);
 
-    // Dispara evento customizado para o overlay
     window.dispatchEvent(
       new CustomEvent("chat:local-message", { detail: trimmedInput }),
     );
@@ -94,12 +90,17 @@ export function ChatInputMobile() {
     >
       <Input
         value={input}
-        onChange={handleInputChange}
+        onChange={(e) => setInput(e.target.value.slice(0, MESSAGE_MAX_LENGTH))}
         onKeyDown={handleKeyDown}
         placeholder={t.chat.placeholder}
-        className="flex-1 text-sm"
+        maxLength={MESSAGE_MAX_LENGTH}
+        className="h-12 flex-1 text-base"
       />
-      <Button type="submit" disabled={!input.trim()} size="default">
+      <Button
+        type="submit"
+        disabled={!input.trim()}
+        className="h-12 px-4 text-base"
+      >
         {t.chat.send}
       </Button>
     </form>

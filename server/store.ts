@@ -4,7 +4,7 @@ import { UserType } from "../backend/user/enum/user-type.enum";
 import { UserGender } from "../backend/user/enum/user-gender.enum";
 import { UserDto } from "../backend/user/dtos/user.dto";
 
-const PAIR_COOLDOWN_MS = 10_000;
+const PAIR_COOLDOWN_MS = 60_000;
 
 const ADJECTIVES = [
   "Swift",
@@ -44,6 +44,7 @@ export type StoredUser = {
   ip: string | null;
   matchType: MatchType;
   filterCountry: string | null;
+  filterGender: UserGender | null;
   createdAt: Date;
   updatedAt: Date;
 };
@@ -67,6 +68,7 @@ export type UserSaveInput = {
   ip?: string | null;
   matchType?: string;
   filterCountry?: string | null;
+  filterGender?: string | null;
 };
 
 type ChatkaStore = {
@@ -110,10 +112,14 @@ function parseMatchType(value?: string): MatchType {
 }
 
 function parseGender(value?: string): UserGender | null {
+  if (value === "COUPLE") {
+    return UserGender.OTHER;
+  }
+
   if (
     value === UserGender.MALE ||
     value === UserGender.FEMALE ||
-    value === UserGender.COUPLE
+    value === UserGender.OTHER
   ) {
     return value;
   }
@@ -172,6 +178,10 @@ function isReady(user?: StoredUser): user is StoredUser {
 }
 
 function acceptsPeer(user: StoredUser, peer: StoredUser) {
+  if (user.filterGender && peer.gender !== user.filterGender) {
+    return false;
+  }
+
   if (user.matchType !== MatchType.COUNTRY) {
     return true;
   }
@@ -213,6 +223,9 @@ export function saveUser(input: UserSaveInput = {}): StoredUser {
     if (input.filterCountry !== undefined) {
       existing.filterCountry = input.filterCountry;
     }
+    if (input.filterGender !== undefined) {
+      existing.filterGender = parseGender(input.filterGender ?? undefined);
+    }
     existing.updatedAt = now;
     return existing;
   }
@@ -229,6 +242,7 @@ export function saveUser(input: UserSaveInput = {}): StoredUser {
     ip: input.ip ?? null,
     matchType: parseMatchType(input.matchType),
     filterCountry: input.filterCountry ?? null,
+    filterGender: parseGender(input.filterGender ?? undefined),
     createdAt: now,
     updatedAt: now,
   };
@@ -266,13 +280,14 @@ export function setUserOffline(userId: string, socketId: string) {
 
 export function joinQueue(
   userId: string,
-  prefs?: Pick<UserSaveInput, "matchType" | "filterCountry">,
+  prefs?: Pick<UserSaveInput, "matchType" | "filterCountry" | "filterGender">,
 ) {
   if (prefs) {
     saveUser({
       userId,
       matchType: prefs.matchType,
       filterCountry: prefs.filterCountry,
+      filterGender: prefs.filterGender,
     });
   }
 

@@ -144,6 +144,12 @@
   body {
     @apply bg-background text-foreground;
   }
+  button:not(:disabled),
+  [type="button"]:not(:disabled),
+  [type="submit"]:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]) {
+    cursor: pointer;
+  }
   option {
     background-color: var(--card);
     color: var(--card-foreground);
@@ -162,8 +168,50 @@
   }
 }
 
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes marquee-reverse {
+  from {
+    transform: translateX(-50%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes reaction-float {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 0) scale(0.55);
+  }
+  14% {
+    opacity: 1;
+    transform: translate(-50%, -16px) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(calc(-50% + var(--reaction-drift)), -190px) scale(1.2);
+  }
+}
+
 @layer utilities {
   .animate-float {
     animation: float 3s ease-in-out infinite;
+  }
+  .animate-reaction-float {
+    animation: reaction-float ease-out forwards;
+  }
+  .animate-marquee {
+    animation: marquee 42s linear infinite;
+  }
+  .animate-marquee-reverse {
+    animation: marquee-reverse 48s linear infinite;
   }
 }

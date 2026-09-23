@@ -11,6 +11,7 @@ type UserSaveDto = Partial<{
   ip: string | null;
   matchType: string;
   filterCountry: string | null;
+  filterGender: string | null;
 }>;
 
 export async function userSaveAction(input?: UserSaveDto): Promise<string> {

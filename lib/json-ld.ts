@@ -1,6 +1,9 @@
+import { messages } from "./i18n/messages";
+import { seoTerms } from "./seo-terms";
+
 export function getJsonLD() {
   const siteUrl = process.env.SITE_URL || "https://chatka.com";
-  const currentYear = new Date().getFullYear();
+  const faq = messages.pt.faq.items;
 
   return {
     "@context": "https://schema.org",
@@ -9,37 +12,35 @@ export function getJsonLD() {
         "@type": "WebApplication",
         "@id": `${siteUrl}#webapp`,
         name: "Chatka",
+        alternateName: [
+          "Chatka Omegle",
+          "Chatka Omeagle",
+          "Anonymous chat without login",
+        ],
         applicationCategory: "CommunicationApplication",
         operatingSystem: "Web Browser",
         offers: {
           "@type": "Offer",
           price: "0",
-          priceCurrency: "BRL",
+          priceCurrency: "USD",
         },
         description:
-          "Conecte-se com pessoas aleatórias do mundo inteiro através de videochat e chat de texto! Chatka é uma plataforma de chat aleatório onde você pode conversar com estranhos via vídeo e mensagens.",
+          "Anonymous chat without login. Random video chat and text chat with strangers. Omegle, Omeagle, Chatroulette and OmeTV alternative. Sem cadastro.",
         url: siteUrl,
         browserRequirements: "Requires JavaScript. Requires HTML5.",
-        softwareVersion: "1.0",
-        releaseNotes: "Plataforma de videochat aleatório com chat de texto",
         featureList: [
+          "Anonymous chat without login",
+          "Random video chat",
+          "Talk to strangers",
+          "Chat anônimo sem cadastro",
           "Videochat aleatório",
-          "Chat de texto em tempo real",
-          "Conexão com pessoas do mundo todo",
-          "Interface moderna e intuitiva",
-          "Gratuito e sem cadastro",
+          "Chat anónimo sin registro",
+          "Omegle alternative",
+          "No signup video chat",
         ],
-        aggregateRating: {
-          "@type": "AggregateRating",
-          ratingValue: "4.8",
-          ratingCount: "1000",
-          bestRating: "5",
-          worstRating: "1",
-        },
-        screenshot: `${siteUrl}/og-image.jpg`,
-        inLanguage: "pt-BR",
+        keywords: seoTerms.join(", "),
+        inLanguage: ["pt-BR", "en", "es"],
         isAccessibleForFree: true,
-        license: "https://opensource.org/licenses/MIT",
       },
       {
         "@type": "Organization",
@@ -52,73 +53,11 @@ export function getJsonLD() {
           width: 512,
           height: 512,
         },
-        sameAs: [
-          // Adicione suas redes sociais aqui
-          // "https://twitter.com/chatka",
-          // "https://facebook.com/chatka",
-          // "https://instagram.com/chatka",
-        ],
         contactPoint: {
           "@type": "ContactPoint",
           contactType: "Customer Service",
-          availableLanguage: ["Portuguese", "English"],
+          availableLanguage: ["Portuguese", "English", "Spanish"],
         },
-      },
-      {
-        "@type": "Service",
-        "@id": `${siteUrl}#service`,
-        name: "Videochat Aleatório",
-        description:
-          "Serviço de videochat aleatório que conecta usuários de todo o mundo para conversas de vídeo e texto em tempo real.",
-        provider: {
-          "@id": `${siteUrl}#organization`,
-        },
-        areaServed: "Worldwide",
-        serviceType: "Video Chat Service",
-        category: "Communication Service",
-        offers: {
-          "@type": "Offer",
-          price: "0",
-          priceCurrency: "BRL",
-        },
-        availableChannel: {
-          "@type": "ServiceChannel",
-          serviceUrl: siteUrl,
-          serviceType: "Online",
-        },
-      },
-      {
-        "@type": "SoftwareApplication",
-        "@id": `${siteUrl}#software`,
-        name: "Chatka",
-        applicationCategory: "CommunicationApplication",
-        operatingSystem: "Web",
-        offers: {
-          "@type": "Offer",
-          price: "0",
-          priceCurrency: "BRL",
-        },
-        aggregateRating: {
-          "@type": "AggregateRating",
-          ratingValue: "4.8",
-          ratingCount: "1000",
-        },
-        description:
-          "Plataforma de videochat aleatório para conectar pessoas do mundo todo através de vídeo e chat de texto.",
-        url: siteUrl,
-        downloadUrl: siteUrl,
-        softwareVersion: "1.0",
-        releaseNotes: "Versão inicial da plataforma de videochat aleatório",
-        featureList: [
-          "Videochat em tempo real",
-          "Chat de texto",
-          "Matchmaking aleatório",
-          "Interface responsiva",
-          "Sem necessidade de cadastro",
-        ],
-        screenshot: `${siteUrl}/screenshot.jpg`,
-        inLanguage: "pt-BR",
-        isAccessibleForFree: true,
       },
       {
         "@type": "WebSite",
@@ -126,19 +65,23 @@ export function getJsonLD() {
         url: siteUrl,
         name: "Chatka",
         description:
-          "Conecte-se com pessoas aleatórias do mundo inteiro através de videochat e chat de texto!",
+          "Anonymous chat without login. Chat aleatório de vídeo e texto, alternativa ao Omegle.",
         publisher: {
           "@id": `${siteUrl}#organization`,
         },
-        inLanguage: "pt-BR",
-        potentialAction: {
-          "@type": "SearchAction",
-          target: {
-            "@type": "EntryPoint",
-            urlTemplate: `${siteUrl}/search?q={search_term_string}`,
+        inLanguage: ["pt-BR", "en", "es"],
+      },
+      {
+        "@type": "FAQPage",
+        "@id": `${siteUrl}#faq`,
+        mainEntity: faq.map((item) => ({
+          "@type": "Question",
+          name: item.question,
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: item.answer,
           },
-          "query-input": "required name=search_term_string",
-        },
+        })),
       },
       {
         "@type": "BreadcrumbList",
@@ -147,7 +90,7 @@ export function getJsonLD() {
           {
             "@type": "ListItem",
             position: 1,
-            name: "Início",
+            name: "Chatka",
             item: siteUrl,
           },
           {
@@ -163,5 +106,5 @@ export function getJsonLD() {
 }
 
 export function getJsonLDString() {
-  return JSON.stringify(getJsonLD(), null, 2);
+  return JSON.stringify(getJsonLD());
 }

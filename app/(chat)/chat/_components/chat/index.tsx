@@ -3,7 +3,9 @@
 import { ChatStatus, useChat } from "@/components/chat/chat.provider";
 import { cn } from "@/lib/utils";
 import { ChatInputMobile } from "./chat-input-mobile";
+import { ReactionBar } from "./reaction-bar";
 import { LocalVideoChat } from "./local-video-chat";
+import { MatchFilters } from "./match-filters";
 import { NextMatchButton } from "./next-match-button";
 import { RemoteVideoChat } from "./remote-video-chat";
 import TextChat from "./text-chat";
@@ -20,37 +22,39 @@ export function Chat() {
         "md:p-4 lg:gap-4",
       )}
     >
-      <section className="flex min-h-0 flex-1 flex-col">
+      <section className="flex min-h-0 flex-1 flex-col md:gap-4">
         <div
           className={cn(
-            "grid min-h-0 flex-1 overflow-hidden",
-            "grid-rows-2 md:grid-rows-1 md:grid-cols-2",
-            "h-[100dvh] md:h-auto lg:h-full",
-            "md:rounded-xl md:border",
-            !isWaiting && "max-md:h-[calc(100dvh-4.5rem)]",
+            "relative min-h-0 flex-1 overflow-hidden",
+            "h-[100dvh] md:grid md:h-auto md:grid-cols-2 md:gap-4 lg:h-full",
+            !isWaiting && "max-md:h-[calc(100dvh-7.5rem)]",
           )}
         >
-          <div className="min-h-0 border-b border-white/10 md:border-b-0 md:border-r">
+          <div className="max-md:contents min-h-0 overflow-hidden md:rounded-xl md:border">
             <LocalVideoChat />
           </div>
-          <div className="min-h-0">
+          <div className="max-md:absolute max-md:inset-0 min-h-0 overflow-hidden md:rounded-xl md:border">
             <RemoteVideoChat />
           </div>
         </div>
 
-        {!isWaiting && (
-          <div className="hidden w-full shrink-0 items-center justify-end py-2 md:flex">
-            <NextMatchButton />
+        <div className="hidden w-full shrink-0 items-stretch gap-4 md:flex">
+          <div className="min-w-0 flex-1">
+            <MatchFilters />
           </div>
-        )}
+          {metadata.status === ChatStatus.CONNECTED && <NextMatchButton />}
+        </div>
       </section>
 
-      <div className="hidden min-h-0 md:flex md:items-stretch">
+      <aside className="hidden min-h-0 md:flex md:items-stretch">
         <TextChat />
-      </div>
+      </aside>
 
       {!isWaiting && (
-        <div className="fixed bottom-0 left-0 right-0 z-40 p-2 md:hidden">
+        <div className="fixed bottom-0 left-0 right-0 z-40 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] md:hidden">
+          <div className="mb-2 flex justify-center">
+            <ReactionBar />
+          </div>
           <div className="flex w-full items-center gap-2">
             <ChatInputMobile />
             <NextMatchButton />

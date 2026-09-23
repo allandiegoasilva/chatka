@@ -79,6 +79,10 @@ export const messages = {
       title: "Pronto quando você estiver.",
       button: "Entrar no chat",
     },
+    seo: {
+      title: "Chat anônimo sem login.",
+      body: "Chatka é um chat aleatório de vídeo e texto, tipo Omegle, Omeagle, Chatroulette e OmeTV: anonymous chat without login, random video chat, talk to strangers. Sem cadastro, sem e-mail, sem perfil. Entra, libera a câmera e conversa com um estranho do mundo todo.",
+    },
     faq: {
       title: "Perguntas",
       items: [
@@ -88,16 +92,22 @@ export const messages = {
             "Entra, libera câmera e microfone, e a gente te junta com outra pessoa na fila. Se não rolar, aperta próximo.",
         },
         {
-          question: "Precisa de conta?",
-          answer: "Não. Você entra anônimo.",
+          question: "Precisa de conta ou login?",
+          answer:
+            "Não. É anonymous chat without login: você entra anônimo, sem cadastro, sem e-mail e sem perfil.",
+        },
+        {
+          question: "É tipo Omegle ou Omeagle?",
+          answer:
+            "Sim. Chatka é uma alternativa ao Omegle, Omeagle, Chatroulette e OmeTV: videochat aleatório com estranhos, grátis e sem login.",
         },
         {
           question: "É grátis?",
-          answer: "Sim.",
+          answer: "Sim. Random video chat gratuito, no browser.",
         },
         {
           question: "Dá para usar no celular?",
-          answer: "Sim. Abre no navegador.",
+          answer: "Sim. Abre no navegador e começa o chat aleatório.",
         },
       ],
     },
@@ -109,13 +119,14 @@ export const messages = {
       genderPlaceholder: "Selecionar",
       male: "Homem",
       female: "Mulher",
-      couple: "Casal",
+      other: "Outro",
       matchType: "Tipo de match",
       world: "Mundo",
       country: "País",
       countryLabel: "País",
       countryPlaceholder: "Selecionar país",
       countrySearch: "Buscar país",
+      countryEmpty: "Nenhum país encontrado.",
       start: "Iniciar",
       requesting: "Pedindo acesso...",
       requestAgain: "Solicitar permissões novamente",
@@ -143,6 +154,8 @@ export const messages = {
       placeholder: "Digite sua mensagem...",
       send: "Enviar",
       empty: "Envie uma mensagem para começar o chat.",
+      any: "Todos",
+      filters: "Filtros",
     },
     notFound: {
       title: "Página não encontrada",
@@ -207,6 +220,10 @@ export const messages = {
       title: "Ready when you are.",
       button: "Start chatting",
     },
+    seo: {
+      title: "Anonymous chat without login.",
+      body: "Chatka is a random video and text chat, like Omegle, Omeagle, Chatroulette and OmeTV: anonymous chat without login, talk to strangers, no signup. Open the browser, allow the camera, and meet someone from anywhere.",
+    },
     faq: {
       title: "FAQ",
       items: [
@@ -216,16 +233,22 @@ export const messages = {
             "Join, allow camera and mic, and we pair you with someone in the queue. If it is not a fit, hit next.",
         },
         {
-          question: "Do I need an account?",
-          answer: "No. You join anonymously.",
+          question: "Do I need an account or login?",
+          answer:
+            "No. This is anonymous chat without login: no account, no email, no profile.",
+        },
+        {
+          question: "Is it like Omegle or Omeagle?",
+          answer:
+            "Yes. Chatka is an Omegle, Omeagle, Chatroulette and OmeTV alternative: free random video chat with strangers, no signup.",
         },
         {
           question: "Is it free?",
-          answer: "Yes.",
+          answer: "Yes. Free random video chat in the browser.",
         },
         {
           question: "Does it work on mobile?",
-          answer: "Yes. Open it in the browser.",
+          answer: "Yes. Open it in the browser and start a random chat.",
         },
       ],
     },
@@ -237,13 +260,14 @@ export const messages = {
       genderPlaceholder: "Select",
       male: "Male",
       female: "Female",
-      couple: "Couple",
+      other: "Other",
       matchType: "Match type",
       world: "World",
       country: "Country",
       countryLabel: "Country",
       countryPlaceholder: "Select a country",
       countrySearch: "Search country",
+      countryEmpty: "No country found.",
       start: "Start",
       requesting: "Asking for access...",
       requestAgain: "Request permissions again",
@@ -270,6 +294,8 @@ export const messages = {
       placeholder: "Type a message...",
       send: "Send",
       empty: "Send a message to start the chat.",
+      any: "Anyone",
+      filters: "Filters",
     },
     notFound: {
       title: "Page not found",
@@ -335,6 +361,10 @@ export const messages = {
       title: "Listo cuando tú lo estés.",
       button: "Entrar al chat",
     },
+    seo: {
+      title: "Chat anónimo sin registro.",
+      body: "Chatka es un videochat aleatorio de video y texto, como Omegle, Omeagle, Chatroulette y OmeTV: anonymous chat without login, chat sin cuenta, hablar con extraños. Entras, das la cámara y hablas con alguien de cualquier país.",
+    },
     faq: {
       title: "Preguntas",
       items: [
@@ -344,16 +374,22 @@ export const messages = {
             "Entras, das cámara y micrófono, y te juntamos con otra persona en la fila. Si no va, toca siguiente.",
         },
         {
-          question: "¿Necesito una cuenta?",
-          answer: "No. Entras anónimo.",
+          question: "¿Necesito cuenta o login?",
+          answer:
+            "No. Es anonymous chat without login: entras anónimo, sin registro, sin correo y sin perfil.",
+        },
+        {
+          question: "¿Es como Omegle u Omeagle?",
+          answer:
+            "Sí. Chatka es una alternativa a Omegle, Omeagle, Chatroulette y OmeTV: videochat aleatorio gratis, sin login.",
         },
         {
           question: "¿Es gratis?",
-          answer: "Sí.",
+          answer: "Sí. Random video chat gratis en el navegador.",
         },
         {
           question: "¿Funciona en el celular?",
-          answer: "Sí. Ábrelo en el navegador.",
+          answer: "Sí. Ábrelo en el navegador y empieza el chat aleatorio.",
         },
       ],
     },
@@ -365,13 +401,14 @@ export const messages = {
       genderPlaceholder: "Seleccionar",
       male: "Hombre",
       female: "Mujer",
-      couple: "Pareja",
+      other: "Otro",
       matchType: "Tipo de match",
       world: "Mundo",
       country: "País",
       countryLabel: "País",
       countryPlaceholder: "Seleccionar país",
       countrySearch: "Buscar país",
+      countryEmpty: "No se encontró ningún país.",
       start: "Empezar",
       requesting: "Pidiendo acceso...",
       requestAgain: "Solicitar permisos otra vez",
@@ -398,6 +435,8 @@ export const messages = {
       placeholder: "Escribe un mensaje...",
       send: "Enviar",
       empty: "Envía un mensaje para empezar el chat.",
+      any: "Todos",
+      filters: "Filtros",
     },
     notFound: {
       title: "Página no encontrada",

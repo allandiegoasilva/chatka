@@ -2,7 +2,7 @@
 
 import { UserGender } from "@/backend/user/enum/user-gender.enum";
 import { cn } from "@/lib/utils";
-import { User, UserCircle, Users } from "lucide-react";
+import { Mars, Transgender, Venus } from "lucide-react";
 
 type RemoteUserBadgeProps = {
   username: string;
@@ -20,11 +20,11 @@ function getCountryFlagUrl(countryCode: string | null): string | null {
 function getGenderIcon(gender: UserGender) {
   switch (gender) {
     case UserGender.MALE:
-      return <User className="size-3.5 text-blue-400" strokeWidth={2.5} />;
+      return <Mars className="size-3.5 text-blue-400" strokeWidth={2.5} />;
     case UserGender.FEMALE:
-      return <UserCircle className="size-3.5 text-pink-400" strokeWidth={2} />;
-    case UserGender.COUPLE:
-      return <Users className="size-3.5 text-purple-400" strokeWidth={2.5} />;
+      return <Venus className="size-3.5 text-pink-400" strokeWidth={2.5} />;
+    case UserGender.OTHER:
+      return <Transgender className="size-3.5 text-violet-400" strokeWidth={2.5} />;
   }
 }
 

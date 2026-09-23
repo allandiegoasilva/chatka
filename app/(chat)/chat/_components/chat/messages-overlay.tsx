@@ -150,7 +150,7 @@ export function MessagesOverlay() {
   return (
     <div
       className={cn(
-        "absolute bottom-20 left-0 right-0 z-30 pr-4 pl-4 h-20 overflow-y-auto md:hidden",
+        "absolute bottom-28 left-0 right-0 z-30 pr-4 pl-4 h-24 overflow-y-auto md:hidden",
         "transition-opacity duration-500 ease-in-out",
         isVisible ? "opacity-100" : "opacity-0",
       )}

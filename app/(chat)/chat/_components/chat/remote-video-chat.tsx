@@ -4,6 +4,7 @@ import { ChatStatus, useChat } from "@/components/chat/chat.provider";
 import { cn } from "@/lib/utils";
 import { useEffect, useRef } from "react";
 import { MessagesOverlay } from "./messages-overlay";
+import { ReactionOverlay } from "./reaction-overlay";
 import { RemoteUserBadge } from "./remote-user-badge";
 import { RemoteVideo } from "./remote-video";
 
@@ -62,6 +63,7 @@ export function RemoteVideoChat() {
             state={metadata.userRemote.state}
           />
           <MessagesOverlay />
+          <ReactionOverlay />
         </>
       )}
 

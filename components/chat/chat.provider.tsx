@@ -1,11 +1,12 @@
 "use client";
 
 import { MatchFoundDto } from "@/backend/match/match-found.dto";
+import { MatchType } from "@/backend/match/match-type.enum";
 import { userGetIdAction } from "@/backend/user/actions/user-get-id.action";
 import { userSaveAction } from "@/backend/user/actions/user-save.action";
 import { UserGender } from "@/backend/user/enum/user-gender.enum";
 import { getLiveUserMedia, holdUserMedia, stopMediaStream } from "@/lib/media";
-import { socketConnect } from "@/lib/socket-client";
+import { getSocket, socketConnect } from "@/lib/socket-client";
 import { createWebrtcClient } from "@/lib/webrtc-client";
 import {
   createContext,
@@ -42,9 +43,17 @@ export type ChatMetadata = {
   };
 };
 
+export type MatchFilters = {
+  filterGender: UserGender | null;
+  matchType: MatchType;
+  filterCountry: string | null;
+};
+
 export type ChatContextProps = {
   changeChat(metadata: Partial<ChatMetadata>): void;
   metadata: ChatMetadata;
+  filters: MatchFilters;
+  setFilters(input: Partial<MatchFilters>): void;
   localStream: RefObject<MediaStream | null>;
   remoteStream: RefObject<MediaStream | null>;
   receivedTrackStream: number;
@@ -61,6 +70,8 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
   const userIdRef = useRef<string | undefined>(undefined);
   const matchIdRef = useRef<string | undefined>(undefined);
   const pendingCandidatesRef = useRef<RTCIceCandidateInit[]>([]);
+  const connectWatchRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const skippedMatchRef = useRef<string | undefined>(undefined);
 
   const [metadata, setMetadata] = useState<
     Omit<ChatMetadata, "localStream" | "remoteStream">
@@ -77,6 +88,18 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
 
   const [receivedTrackStream, setReceivedTrackStream] = useState<number>(0);
   const [localStreamVersion, setLocalStreamVersion] = useState(0);
+  const [filters, setFiltersState] = useState<MatchFilters>({
+    filterGender: null,
+    matchType: MatchType.WORLD,
+    filterCountry: null,
+  });
+
+  function setFilters(input: Partial<MatchFilters>) {
+    setFiltersState((current) => ({
+      ...current,
+      ...input,
+    }));
+  }
 
   function setLocalMedia(stream: MediaStream) {
     if (localStreamRef.current && localStreamRef.current !== stream) {
@@ -115,6 +138,69 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
       ...prev,
       ...input,
     }));
+  }
+
+  function clearConnectWatch() {
+    if (connectWatchRef.current) {
+      clearTimeout(connectWatchRef.current);
+      connectWatchRef.current = null;
+    }
+  }
+
+  function isPeerConnected(pc: RTCPeerConnection) {
+    const ice = pc.iceConnectionState;
+    return (
+      pc.connectionState === "connected" ||
+      ice === "connected" ||
+      ice === "completed"
+    );
+  }
+
+  function skipCurrentMatch() {
+    const matchId = matchIdRef.current;
+    if (!matchId || skippedMatchRef.current === matchId) {
+      return;
+    }
+
+    skippedMatchRef.current = matchId;
+    clearConnectWatch();
+    getSocket()?.emit("match:next", {
+      matchId,
+      userId: userIdRef.current,
+    });
+  }
+
+  function startConnectWatch(matchId: string, pc: RTCPeerConnection) {
+    clearConnectWatch();
+    skippedMatchRef.current = undefined;
+
+    const onState = () => {
+      if (matchIdRef.current !== matchId) {
+        return;
+      }
+
+      if (isPeerConnected(pc)) {
+        clearConnectWatch();
+        return;
+      }
+
+      if (pc.connectionState === "failed" || pc.iceConnectionState === "failed") {
+        skipCurrentMatch();
+      }
+    };
+
+    pc.addEventListener("connectionstatechange", onState);
+    pc.addEventListener("iceconnectionstatechange", onState);
+
+    connectWatchRef.current = setTimeout(() => {
+      if (matchIdRef.current !== matchId) {
+        return;
+      }
+
+      if (!isPeerConnected(pc)) {
+        skipCurrentMatch();
+      }
+    }, 12_000);
   }
 
   async function flushPendingCandidates(pc: RTCPeerConnection) {
@@ -200,13 +286,17 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
         },
       });
 
-      webRTCRef.current = createWebrtcClient();
+      const pc = createWebrtcClient();
+      webRTCRef.current = pc;
 
       localWebRTCClient(match.startOffer, match.matchId);
       eventWebRTCClient(match.matchId);
+      startConnectWatch(match.matchId, pc);
     });
 
     socket.on("match:ended", () => {
+      clearConnectWatch();
+      skippedMatchRef.current = undefined;
       webRTCRef.current?.close();
       webRTCRef.current = null;
       remoteStreamRef.current = null;
@@ -308,6 +398,7 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
 
     return () => {
       active = false;
+      clearConnectWatch();
     };
   }, []);
 
@@ -316,6 +407,8 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
       value={{
         changeChat,
         metadata,
+        filters,
+        setFilters,
         localStream: localStreamRef,
         remoteStream: remoteStreamRef,
         receivedTrackStream,

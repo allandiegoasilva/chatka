@@ -5,6 +5,7 @@ import { ChatStatus, useChat } from "@/components/chat/chat.provider";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { clampMessage, MESSAGE_MAX_LENGTH } from "@/lib/chat-limits";
 import { useI18n } from "@/lib/i18n/provider";
 import { getSocket } from "@/lib/socket-client";
 import { cn } from "@/lib/utils";
@@ -28,7 +29,7 @@ export default function TextChat() {
   }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInput(e.target.value);
+    setInput(e.target.value.slice(0, MESSAGE_MAX_LENGTH));
   };
 
   async function sendMessage(message: Message) {
@@ -58,7 +59,7 @@ export default function TextChat() {
   async function handleSend(e: FormEvent) {
     e.preventDefault();
 
-    const trimmedInput = input.trim();
+    const trimmedInput = clampMessage(input);
     if (!trimmedInput) return;
 
     const userMessage: Message = {
@@ -221,6 +222,7 @@ export default function TextChat() {
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
             placeholder={t.chat.placeholder}
+            maxLength={MESSAGE_MAX_LENGTH}
             className="flex-1 text-sm sm:text-base"
           />
           <Button type="submit" disabled={!input.trim()}>

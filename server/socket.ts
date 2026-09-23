@@ -1,4 +1,6 @@
 import type { Server, Socket } from "socket.io";
+import { clampMessage } from "../lib/chat-limits";
+import { isReactionType } from "../lib/reactions";
 import {
   endMatch,
   ensureUser,
@@ -24,11 +26,13 @@ type SignalingPayload = {
   candidate?: unknown;
   message?: string;
   isTyping?: boolean;
+  reaction?: string;
 };
 
 type QueueJoinPayload = {
   matchType?: string;
   filterCountry?: string | null;
+  filterGender?: string | null;
 };
 
 function queryValue(value: string | string[] | undefined): string | undefined {
@@ -135,6 +139,7 @@ export function attachSocket(io: Server) {
       joinQueue(user.id, {
         matchType: payload?.matchType,
         filterCountry: payload?.filterCountry,
+        filterGender: payload?.filterGender,
       });
       tryMatch(nsp);
     });
@@ -177,13 +182,23 @@ export function attachSocket(io: Server) {
 
     socket.on("chat:send", (payload?: SignalingPayload) => {
       relayToPeer(nsp, user.id, payload?.matchId, "chat:message", {
-        message: payload?.message ?? "",
+        message: clampMessage(payload?.message ?? ""),
       });
     });
 
     socket.on("chat:typing", (payload?: SignalingPayload) => {
       relayToPeer(nsp, user.id, payload?.matchId, "chat:typing", {
         isTyping: Boolean(payload?.isTyping),
+      });
+    });
+
+    socket.on("chat:react", (payload?: SignalingPayload) => {
+      if (!isReactionType(payload?.reaction)) {
+        return;
+      }
+
+      relayToPeer(nsp, user.id, payload?.matchId, "chat:reaction", {
+        reaction: payload.reaction,
       });
     });
 

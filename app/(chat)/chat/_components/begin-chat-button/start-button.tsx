@@ -13,6 +13,7 @@ import { useI18n } from "@/lib/i18n/provider";
 import { requestUserMedia } from "@/lib/media";
 import { socketConnect } from "@/lib/socket-client";
 import { cn } from "@/lib/utils";
+import { Mars, Transgender, Venus } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
 type LocationData = {
@@ -57,7 +58,7 @@ async function getUserLocation(): Promise<LocationData> {
 
 export function StartButton() {
   const { t, locale } = useI18n();
-  const { changeChat, setLocalMedia } = useChat();
+  const { changeChat, setFilters, setLocalMedia } = useChat();
   const [gender, setGender] = useState<UserGender | null>(null);
   const [matchType, setMatchType] = useState<MatchType>(MatchType.WORLD);
   const [filterCountry, setFilterCountry] = useState("");
@@ -141,12 +142,20 @@ export function StartButton() {
         ip: currentLocation.ip,
         matchType,
         filterCountry: selectedCountry,
+        filterGender: null,
+      });
+
+      setFilters({
+        filterGender: null,
+        matchType,
+        filterCountry: selectedCountry,
       });
 
       const socket = await socketConnect();
       socket?.emit("queue:join", {
         matchType,
         filterCountry: selectedCountry,
+        filterGender: null,
       });
 
       changeChat({
@@ -179,23 +188,45 @@ export function StartButton() {
   return (
     <div className="w-full space-y-4">
       <div className="flex flex-col gap-2">
-        <label htmlFor="gender-select" className="text-sm text-muted-foreground">
-          {t.connect.gender}
-        </label>
-        <select
-          id="gender-select"
-          value={gender || ""}
-          onChange={(e) => setGender(e.target.value as UserGender | null)}
-          className={cn(
-            "h-11 w-full rounded-md border border-input bg-background px-3 text-sm",
-            "outline-none focus-visible:border-ring",
-          )}
-        >
-          <option value="">{t.connect.genderPlaceholder}</option>
-          <option value={UserGender.MALE}>{t.connect.male}</option>
-          <option value={UserGender.FEMALE}>{t.connect.female}</option>
-          <option value={UserGender.COUPLE}>{t.connect.couple}</option>
-        </select>
+        <p className="text-sm text-muted-foreground">{t.connect.gender}</p>
+        <div className="grid grid-cols-3 gap-2">
+          {[
+            {
+              value: UserGender.MALE,
+              label: t.connect.male,
+              icon: Mars,
+            },
+            {
+              value: UserGender.FEMALE,
+              label: t.connect.female,
+              icon: Venus,
+            },
+            {
+              value: UserGender.OTHER,
+              label: t.connect.other,
+              icon: Transgender,
+            },
+          ].map((option) => {
+            const selected = gender === option.value;
+            const Icon = option.icon;
+            return (
+              <button
+                key={option.value}
+                type="button"
+                onClick={() => setGender(option.value)}
+                className={cn(
+                  "flex flex-col items-center justify-center gap-1.5 rounded-md border px-2 py-3 text-xs",
+                  selected
+                    ? "border-primary bg-primary/10 text-foreground"
+                    : "border-input bg-background text-muted-foreground hover:border-ring hover:text-foreground",
+                )}
+              >
+                <Icon className="size-5" strokeWidth={2} />
+                <span>{option.label}</span>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       <div className="flex flex-col gap-2">
