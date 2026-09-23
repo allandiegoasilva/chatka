@@ -17,12 +17,15 @@ export function Footer() {
           </Link>
           <p>{t.hero.note}</p>
         </div>
-        <div className="flex items-center gap-5">
-          <Link href="#how" className="hover:text-foreground">
+        <div className="flex flex-wrap items-center gap-5">
+          <Link href="/#how" className="hover:text-foreground">
             {t.nav.how}
           </Link>
-          <Link href="#faq" className="hover:text-foreground">
+          <Link href="/#faq" className="hover:text-foreground">
             {t.nav.faq}
+          </Link>
+          <Link href="/terms" className="hover:text-foreground">
+            {t.nav.terms}
           </Link>
           <Link href="/chat" className="hover:text-foreground">
             {t.nav.chat}

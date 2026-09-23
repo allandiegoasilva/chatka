@@ -22,16 +22,22 @@ export function Header() {
 
           <div className="hidden md:flex items-center gap-6">
             <Link
-              href="#how"
+              href="/#how"
               className="text-sm text-muted-foreground hover:text-foreground"
             >
               {t.nav.how}
             </Link>
             <Link
-              href="#faq"
+              href="/#faq"
               className="text-sm text-muted-foreground hover:text-foreground"
             >
               {t.nav.faq}
+            </Link>
+            <Link
+              href="/terms"
+              className="text-sm text-muted-foreground hover:text-foreground"
+            >
+              {t.nav.terms}
             </Link>
             <LanguageSwitcher />
             <Button asChild size="sm">
@@ -51,18 +57,25 @@ export function Header() {
         {isMenuOpen && (
           <div className="md:hidden pb-4 space-y-3">
             <Link
-              href="#how"
+              href="/#how"
               onClick={() => setIsMenuOpen(false)}
               className="block text-sm text-muted-foreground"
             >
               {t.nav.how}
             </Link>
             <Link
-              href="#faq"
+              href="/#faq"
               onClick={() => setIsMenuOpen(false)}
               className="block text-sm text-muted-foreground"
             >
               {t.nav.faq}
+            </Link>
+            <Link
+              href="/terms"
+              onClick={() => setIsMenuOpen(false)}
+              className="block text-sm text-muted-foreground"
+            >
+              {t.nav.terms}
             </Link>
             <LanguageSwitcher />
             <Button asChild className="w-full">

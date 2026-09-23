@@ -27,6 +27,7 @@ export const messages = {
       chat: "Chat",
       menu: "Menu",
       how: "Como funciona",
+      terms: "Termos",
     },
     hero: {
       title: "Fala com um estranho. Agora.",
@@ -109,6 +110,11 @@ export const messages = {
           question: "Dá para usar no celular?",
           answer: "Sim. Abre no navegador e começa o chat aleatório.",
         },
+        {
+          question: "Menor de 18 anos pode usar?",
+          answer:
+            "Não. O Chatka é só para maiores de 18 anos. Criança e adolescente não podem entrar.",
+        },
       ],
     },
     connect: {
@@ -141,6 +147,9 @@ export const messages = {
       disconnectedDescription:
         "O servidor desconectou. Tenta de novo.",
       closeAlert: "Fechar alerta",
+      ageConfirm: "Tenho 18 anos ou mais",
+      termsConfirm: "Li e concordo com os",
+      termsLink: "Termos de uso",
     },
     waiting: {
       title: "Procurando alguém...",
@@ -162,6 +171,42 @@ export const messages = {
       description: "Essa página não existe.",
       back: "Voltar",
     },
+    terms: {
+      title: "Termos de uso",
+      updated: "Atualizado em 23 de setembro de 2026",
+      intro:
+        "Ao usar o Chatka, você confirma que leu e aceita estes termos. Se não concordar, não use o serviço.",
+      sections: [
+        {
+          title: "1. Idade mínima",
+          body: "O Chatka é exclusivo para pessoas com 18 anos ou mais. Menores de idade são proibidos. Ao entrar, você declara que é maior de 18 anos. Se identificarmos uso por criança ou adolescente, a sessão é encerrada.",
+        },
+        {
+          title: "2. O que é o Chatka",
+          body: "O Chatka é um chat aleatório de vídeo e texto, sem conta e sem login. Você pode ser conectado a qualquer pessoa adulta online. Não há garantia de com quem você vai falar.",
+        },
+        {
+          title: "3. Conduta",
+          body: "É proibido assédio, ameaça, conteúdo ilegal, exploração sexual, e qualquer material envolvendo menores. Não grave, transmita nem publique a imagem de outra pessoa sem consentimento. Se alguém pedir para parar, pare.",
+        },
+        {
+          title: "4. Câmera e microfone",
+          body: "O acesso à câmera e ao microfone acontece só no seu navegador e só depois da sua autorização. Você pode revogar a permissão a qualquer momento nas configurações do navegador.",
+        },
+        {
+          title: "5. Anonimato e dados",
+          body: "Não pedimos nome real, e-mail nem senha. Podemos guardar o mínimo necessário para operar o match, como preferências, país aproximado e estado da sessão. Não vendemos seus dados.",
+        },
+        {
+          title: "6. Encerramento",
+          body: "Podemos encerrar uma sessão ou restringir o acesso se houver violação destes termos ou risco para outras pessoas. Você pode sair a qualquer momento fechando a página ou apertando próximo.",
+        },
+        {
+          title: "7. Responsabilidade",
+          body: "O Chatka é oferecido como está. Conversas com estranhos envolvem risco. Não nos responsabilizamos por o que outros usuários dizem ou fazem. Se algo for ilegal, denuncie às autoridades competentes.",
+        },
+      ],
+    },
   },
   en: {
     nav: {
@@ -169,6 +214,7 @@ export const messages = {
       chat: "Chat",
       menu: "Menu",
       how: "How it works",
+      terms: "Terms",
     },
     hero: {
       title: "Talk to a stranger. Now.",
@@ -250,6 +296,11 @@ export const messages = {
           question: "Does it work on mobile?",
           answer: "Yes. Open it in the browser and start a random chat.",
         },
+        {
+          question: "Can people under 18 use it?",
+          answer:
+            "No. Chatka is only for adults 18 and older. Children and teenagers are not allowed.",
+        },
       ],
     },
     connect: {
@@ -281,6 +332,9 @@ export const messages = {
       disconnectedTitle: "Connection lost",
       disconnectedDescription: "The server disconnected. Try again.",
       closeAlert: "Close alert",
+      ageConfirm: "I am 18 years or older",
+      termsConfirm: "I have read and agree to the",
+      termsLink: "Terms of use",
     },
     waiting: {
       title: "Looking for someone...",
@@ -302,6 +356,42 @@ export const messages = {
       description: "This page does not exist.",
       back: "Back",
     },
+    terms: {
+      title: "Terms of use",
+      updated: "Updated on September 23, 2026",
+      intro:
+        "By using Chatka, you confirm that you have read and accept these terms. If you do not agree, do not use the service.",
+      sections: [
+        {
+          title: "1. Minimum age",
+          body: "Chatka is only for people 18 years or older. Minors are not allowed. By joining, you state that you are 18 or older. If we identify use by a child or teenager, the session is ended.",
+        },
+        {
+          title: "2. What Chatka is",
+          body: "Chatka is a random video and text chat with no account and no login. You may be paired with any adult online. There is no guarantee of who you will meet.",
+        },
+        {
+          title: "3. Conduct",
+          body: "Harassment, threats, illegal content, sexual exploitation, and any material involving minors are forbidden. Do not record, stream, or publish another person's image without consent. If someone asks you to stop, stop.",
+        },
+        {
+          title: "4. Camera and microphone",
+          body: "Camera and microphone access happens only in your browser and only after you allow it. You can revoke permission at any time in the browser settings.",
+        },
+        {
+          title: "5. Anonymity and data",
+          body: "We do not ask for a real name, email, or password. We may keep the minimum needed to run matching, such as preferences, approximate country, and session state. We do not sell your data.",
+        },
+        {
+          title: "6. Termination",
+          body: "We may end a session or restrict access if these terms are broken or if other people are at risk. You can leave at any time by closing the page or hitting next.",
+        },
+        {
+          title: "7. Liability",
+          body: "Chatka is provided as is. Talking to strangers involves risk. We are not responsible for what other users say or do. If something is illegal, report it to the competent authorities.",
+        },
+      ],
+    },
   },
   es: {
     nav: {
@@ -309,6 +399,7 @@ export const messages = {
       chat: "Chat",
       menu: "Menú",
       how: "Cómo funciona",
+      terms: "Términos",
     },
     hero: {
       title: "Habla con un extraño. Ahora.",
@@ -391,6 +482,11 @@ export const messages = {
           question: "¿Funciona en el celular?",
           answer: "Sí. Ábrelo en el navegador y empieza el chat aleatorio.",
         },
+        {
+          question: "¿Pueden usarlo menores de 18?",
+          answer:
+            "No. Chatka es solo para mayores de 18 años. Niños y adolescentes no pueden entrar.",
+        },
       ],
     },
     connect: {
@@ -422,6 +518,9 @@ export const messages = {
       disconnectedTitle: "Conexión perdida",
       disconnectedDescription: "El servidor se desconectó. Inténtalo de nuevo.",
       closeAlert: "Cerrar aviso",
+      ageConfirm: "Tengo 18 años o más",
+      termsConfirm: "Leí y acepto los",
+      termsLink: "Términos de uso",
     },
     waiting: {
       title: "Buscando a alguien...",
@@ -442,6 +541,42 @@ export const messages = {
       title: "Página no encontrada",
       description: "Esta página no existe.",
       back: "Volver",
+    },
+    terms: {
+      title: "Términos de uso",
+      updated: "Actualizado el 23 de septiembre de 2026",
+      intro:
+        "Al usar Chatka, confirmas que leíste y aceptas estos términos. Si no estás de acuerdo, no uses el servicio.",
+      sections: [
+        {
+          title: "1. Edad mínima",
+          body: "Chatka es solo para personas de 18 años o más. Los menores no pueden usarlo. Al entrar, declaras que tienes 18 años o más. Si identificamos uso por un niño o adolescente, la sesión se cierra.",
+        },
+        {
+          title: "2. Qué es Chatka",
+          body: "Chatka es un chat aleatorio de video y texto, sin cuenta y sin login. Puedes ser conectado con cualquier persona adulta en línea. No hay garantía de con quién vas a hablar.",
+        },
+        {
+          title: "3. Conducta",
+          body: "Están prohibidos el acoso, las amenazas, el contenido ilegal, la explotación sexual y cualquier material que involucre menores. No grabes, transmitas ni publiques la imagen de otra persona sin consentimiento. Si alguien te pide que pares, para.",
+        },
+        {
+          title: "4. Cámara y micrófono",
+          body: "El acceso a la cámara y al micrófono ocurre solo en tu navegador y solo después de tu autorización. Puedes revocar el permiso en cualquier momento en la configuración del navegador.",
+        },
+        {
+          title: "5. Anonimato y datos",
+          body: "No pedimos nombre real, correo ni contraseña. Podemos guardar lo mínimo para operar el match, como preferencias, país aproximado y estado de la sesión. No vendemos tus datos.",
+        },
+        {
+          title: "6. Cierre",
+          body: "Podemos cerrar una sesión o restringir el acceso si se violan estos términos o si hay riesgo para otras personas. Puedes salir en cualquier momento cerrando la página o tocando siguiente.",
+        },
+        {
+          title: "7. Responsabilidad",
+          body: "Chatka se ofrece tal como está. Hablar con extraños implica riesgo. No nos hacemos responsables de lo que otros usuarios digan o hagan. Si algo es ilegal, denúncialo a las autoridades competentes.",
+        },
+      ],
     },
   },
 } as const;

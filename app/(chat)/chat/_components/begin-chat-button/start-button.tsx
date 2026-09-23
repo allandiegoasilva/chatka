@@ -14,6 +14,7 @@ import { requestUserMedia } from "@/lib/media";
 import { socketConnect } from "@/lib/socket-client";
 import { cn } from "@/lib/utils";
 import { Mars, Transgender, Venus } from "lucide-react";
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
 type LocationData = {
@@ -69,6 +70,8 @@ export function StartButton() {
   });
   const [permissionError, setPermissionError] = useState<PermissionError>(null);
   const [isRequesting, setIsRequesting] = useState(false);
+  const [isAdult, setIsAdult] = useState(false);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
 
   const countries = useMemo(() => {
     const items = listCountries(localeHtml[locale]);
@@ -95,7 +98,9 @@ export function StartButton() {
 
   const canStart =
     Boolean(gender) &&
-    (matchType === MatchType.WORLD || Boolean(filterCountry));
+    (matchType === MatchType.WORLD || Boolean(filterCountry)) &&
+    isAdult &&
+    acceptedTerms;
 
   function permissionMessage(error: PermissionError) {
     if (error === "denied") {
@@ -272,6 +277,36 @@ export function StartButton() {
           {permissionMessage(permissionError)}
         </p>
       )}
+
+      <div className="space-y-2.5">
+        <label className="flex items-start gap-2.5 text-sm text-muted-foreground">
+          <input
+            type="checkbox"
+            checked={isAdult}
+            onChange={(event) => setIsAdult(event.target.checked)}
+            className="mt-0.5 size-4 shrink-0 accent-primary"
+          />
+          <span>{t.connect.ageConfirm}</span>
+        </label>
+        <label className="flex items-start gap-2.5 text-sm text-muted-foreground">
+          <input
+            type="checkbox"
+            checked={acceptedTerms}
+            onChange={(event) => setAcceptedTerms(event.target.checked)}
+            className="mt-0.5 size-4 shrink-0 accent-primary"
+          />
+          <span>
+            {t.connect.termsConfirm}{" "}
+            <Link
+              href="/terms"
+              target="_blank"
+              className="text-foreground underline underline-offset-2"
+            >
+              {t.connect.termsLink}
+            </Link>
+          </span>
+        </label>
+      </div>
 
       <div className="space-y-2">
         <ShimmerButton
